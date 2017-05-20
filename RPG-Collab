@@ -84,10 +84,15 @@ class draining(skills):
       target.life = False
       
 def battle(guy,NME):
+  print(" ")
+  print("The battle between %s and %s commences!"%(guy.name,NME.name))
   while True:
     i = 0
     while i==0:
-      move = input("What skill do you want to use?")
+      print("Skills available to you:")
+      for x in guy.skills:
+        print(x)
+      move = input("Which skill do you want to use?")
       for x in skills.instances:
         if x.name == move and x.name in guy.skills:
           if isinstance(x, healing):
@@ -133,8 +138,6 @@ Purify = healing("Purify", 2, "A healing current of water that purifies any toxi
 Heal = healing("Heal", 2, "A holy veil of light that envelops the player and heals any wounds.")
 Lifedrain = draining("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.")
 GreatswordSlash = damaging("GreatswordSlash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.")    
-
-Goblin = Player("Goblin", 3, 1)
         
 def elementTxt(t):
   switcher = {
