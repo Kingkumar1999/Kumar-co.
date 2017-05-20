@@ -1,0 +1,356 @@
+import time
+import sys
+import random as rand
+
+class Player:
+  """The data for the players."""
+  def __init__(self, name, hp, atk):
+        self.name = name
+        self.health = hp
+        self.maxHealth = hp
+        self.attackPower = atk
+        self.life = True
+        self.attackDamage = 0
+        self.skills= []
+        self.aura=1
+        self.types= "Normal"
+  def use_move(self, target, move):
+        move.applyMove(self,target)
+  def add_move(self, move):
+        self.skills.append(move)
+        print("%s has learned %s!"%(self.name,move))
+        for x in skills.instances:
+          if x.name == move:
+            print(x.discription)
+            break
+        time.sleep(3)
+        print(" ")
+  def powerUp(self, newAura):
+        self.aura = newAura
+  def add_type(self,Element):
+        self.types = Element
+        print("%s is a %s type!"%(self.name,Element))
+
+class skills:
+  """The general data for the skills."""
+  instances = []
+  def __init__(self, name, power, discription):
+    self.name = name
+    self.power = power
+    self.discription = discription
+    self.__class__.instances.append(self)
+  def desc(self):
+    print(self.discription)
+
+class damaging(skills):
+  """The  data for damaging skills."""
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    user.attackDamage = self.power * user.attackPower * user.aura
+    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
+    target.health -= damageDone
+    if typeMatchup(user.types,target.types)==2:
+      print("The attack was super effective!")
+    elif typeMatchup(user.types,target.types)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    if target.health < 1:
+      target.life = False
+    
+class healing(skills):
+  """The  data for healing skills."""
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    user.attackDamage = self.power * user.aura
+    target.health += user.attackDamage
+    print("%s's health has been increased to %d."%(target.name,target.health))
+    
+class draining(skills):
+  """The  data for draining skills."""
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    user.attackDamage = self.power * user.attackPower * user.aura
+    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
+    target.health -= user.attackDamage
+    user.health += 0.5 * damageDone
+    if typeMatchup(user.types,target.types)==2:
+      print("The attack was super effective!")
+    elif typeMatchup(user.types,target.types)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d and %s's health was increased to %d"%(target.name, target.health, user.name, user.health))
+    if target.health < 1:
+      target.life = False
+      
+def battle(guy,NME):
+  while True:
+    i = 0
+    while i==0:
+      move = input("What skill do you want to use?")
+      for x in skills.instances:
+        if x.name == move and x.name in guy.skills:
+          if isinstance(x, healing):
+            guy.use_move(guy,x)
+          else:
+            guy.use_move(NME,x)
+          i = 1
+          break 
+    if NME.life==False:
+      print("%s has won the battle!"%guy.name)
+      print("You defeated the %s! You found a potion! All hp restored!"%NME.name)
+      P1.health = P1.maxHealth
+      break
+    move = rand.choice(NME.skills)
+    for x in skills.instances:
+        if x.name == move:
+          if isinstance(x, healing):
+            NME.use_move(NME,x)
+          else:
+            NME.use_move(guy,x)
+          i = 1
+          break
+    if guy.life==False:
+      print("%s was slain in battle! You lost the game!"%guy.name)
+      sys.exit()      
+
+Wildfire= damaging("Wildfire", 2, "A small fire that burns enemies.")
+Splash = damaging("Splash", 1.5, "A jet of water that damages enemies.")
+Tremor = damaging("Tremor", 2, "A small quake that makes enemies tremble.")
+Gust = damaging("Gust", 1.5, "A windy blast that blows enemies away.")
+Flash = damaging("Flash", 1.5, "A weak flash of light that hurts enemies.")
+Astonish = damaging("Astonish", 2, "A sudden movement that scares of enemies.")
+Meme = damaging("Meme", 2, "A dank meme that makes enemies angry.")
+StonesNshit = damaging("StonesNshit", 1, "Rocks used by the stone golem to attack the player.")
+GoblinKnife = damaging("GoblinKnife", 1, "The goblin's knife used to attack the player.")
+Flames_of_Exile = damaging("Flames of Exile", 1, "A magical flame used to attack the player.")
+Hellwheel = damaging("Hellwheel", 3, "A bright-red flaming wheel rolling over targets to burn them to crisps.")
+Woodslam = damaging("Woodslam", 2, "The user's entire body is covered in solid wood, and is slung towards the enemy.")
+Airjet = damaging("Airjet", 2, "A powerful wind that knocks down enemies.")
+Roast = damaging("Roast", 3, "An epic roast to pester enemies and make them angry.")
+ThiefBash = damaging("ThiefBash", 1, "A bash with a mace used by the thief to attack the player.")
+Purify = healing("Purify", 2, "A healing current of water that purifies any toxins and regenerates the player.")
+Heal = healing("Heal", 2, "A holy veil of light that envelops the player and heals any wounds.")
+Lifedrain = draining("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.")
+GreatswordSlash = damaging("GreatswordSlash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.")    
+
+Goblin = Player("Goblin", 3, 1)
+        
+def elementTxt(t):
+  switcher = {
+    'Fire': "So you choose fire, you must be a fiery person then(no puns intended). You have a lot of firepower, but you can get angered quickly. Your class is: [ATTACK], skills are: [Wildfire]",
+    'Water': "So you choose water eh? You like to swim a lot, do you? You are a tender person that cares for others. Your class is: [SUPPORT], skills are: [Splash]",
+    'Earth': "You choose earth, the best element jk. You are a strong and worthy person, and you can lift boulders and other stuff. Your class is: [DEFENSE], skills are: [Tremor]",
+    'Air': "Air?! Is that even a natural element?! Of course it is! Remember: don't crash into mountains! Your class is: [DEFENSE], skills are: [Gust]",
+    'Light': "Your choice is light, a noble element with honour. We expect you to have such honour as well, otherwise the gods will punish you! Your class is: [SUPPORT], skills are: [Flash]",
+    'Darkness': "You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]",
+    'Swag': "Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]",
+  }
+  return switcher.get(t)
+  
+def typeMatchup(type1,type2):
+  combo = "%s%s"%(type1,type2)
+  switcher = {
+    "FireEarth":2,
+    "EarthAir":2,
+    "AirWater":2,
+    "WaterFire":2,
+    "LightDarkness":2,
+    "DarknessLight":2,
+    "FireWater":0.5,
+    "WaterAir":0.5,
+    "AirEarth":0.5,
+    "EarthFire":0.5,
+  }
+  return switcher.get(combo,1)
+
+directions = ["Left", "Right", "Straight"]
+types = ['Fire','Water','Earth','Air','Light','Darkness','Swag']
+
+def Moves (num):
+  allskills = {
+   'Fire': ["Wildfire", "Hellwheel"],
+   'Water': ["Splash", "Purify"],
+   'Earth': ["Tremor", "Woodslam"],
+   'Air': ["Gust", "Airjet"],
+   'Light': ["Flash", "Healing"],
+   'Darkness': ["Astonish", "Lifedrain"],
+   'Swag': ["Meme", "Roast"],
+  }
+  return allskills.get(BasicElement)[num-1]
+  
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
+
+
+print ("Welcome to Earth, a beautiful planet full of life...")
+
+time.sleep(2)
+
+while True:
+  nick = input("Hello there! What is your name?")
+  if len(nick) > 0:
+    if nick == "Cesar":
+      print("So your name is %s! That is a really good name!"%nick)
+    elif nick =="Owen":
+      print("So your name is %s! You remind me of someone..."%nick)
+    else:  
+      print ("So your name is %s!"%nick)
+    P1= Player(nick, 3, 1)
+    break
+  else:
+    print ("Try again, my friend :)")
+    
+print(" ")
+
+time.sleep(1)
+  
+while (True):
+  BasicElement = input("In ancient times, there have been six elements of nature: Fire, Water, Earth, Air, Light and Darkness. Which element do you feel most connected with?")
+  if BasicElement in types:
+    print(" ")
+    print(elementTxt(BasicElement))
+    time.sleep(1)
+    P1.add_type(BasicElement)
+    P1.add_move(Moves(1))
+    time.sleep(1)
+    break
+  else:
+    print ("Try again, my friend :)")
+    
+print(" ")
+print ("And so, your adventure and quest begins...")
+
+time.sleep(2)
+
+while True:
+  Dungeon1choice =  input("300 a.c. You are in a dungeon. You walk until you find a passageway with three ways, one left, one right, and one straight before you. Which way should you go? Left, Right or Straight?")
+  if Dungeon1choice in directions:
+    print (" ")
+    print("You took the %s path."%Dungeon1choice)
+    time.sleep(1)
+    if Dungeon1choice == 'Left':
+      print(" ")
+      print ("Oh no! There is a goblin up ahead!")
+      P2 = Player("Goblin", 3, 1)
+      P2.add_move("GoblinKnife")
+      print(" ")
+      print("A goblin appeared! He is kinda ugly.")
+      battle(P1,P2)
+    elif Dungeon1choice == 'Right':
+      print(" ")
+      print ("Welp, no enemies ahead! :)")
+    else:
+      print(" ")
+      print ("NO! That is a stone golem up ahead! This will be a difficult fight ;-;")
+      P2 = Player("StoneGolem", 5, 0.5)
+      P2.add_move("StonesNshit")
+      print(" ")
+      print("The stone golem guarding the middle path attacks you!")
+      battle(P1,P2)
+    break
+  else: 
+    print ("Try again, my friend :)")
+
+
+  
+time.sleep(1)
+
+print(" ")
+
+print("You walk out the %s Path. You proceed to the inner tomb..."%Dungeon1choice)
+
+time.sleep(1)
+
+print(" ")
+print("You found the inner tomb. You can see all kinds of treasure lying around. Suddenly, you hear a cold and dread voice speaking: 'YOU COME TO STEAL MY TREASURE, AND YOU WILL NOW FEEL MY WRATH!'. Turning around, you see a levitating corpse with a crown. You have no choice but to battle him to get out of here alive...")
+
+P2 = Player("DeadKing",7,1)
+P2.add_move("Flames of Exile")
+
+time.sleep(1)
+
+print(" ")
+print("The dead king of this tomb has appeared, and attacks you!")
+time.sleep(1)
+print(" ")
+print("However, you can feel an mysterious aura enveloping you. You feel stronger now!")
+P1.powerUp(1.5)
+  
+battle(P1,P2)
+  
+print(" ")
+print("The undead king has vanished, leaving no trace behind whatsoever. You gained experience, and leveled up! Your health, attack have increased, and you learned a new skill!")
+
+print(" ")
+time.sleep(1)
+
+P1.add_move(Moves(2))
+
+P1.maxHealth = P1.maxHealth + 3
+P1.health = P1.health + 3
+P1.attackPower = P1.attackPower + 0.5
+
+print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
+
+time.sleep(2)
+
+print("You find a secret switch in the tomb, which opens a secret passage. You take the passage, and you arrive in a small hall. You can see a pedestal with a key lying on it. You take the key.")
+print(" ")
+time.sleep(2)
+print("You have gained the Ancient Key!")
+print(" ")
+time.sleep(2)
+print("As you walk outside, you see a thief standing before you. He says: 'Hand over the good stuff or else!' He is holding a mace. You have to battle him!")
+
+time.sleep(2)
+P2 = Player("Ambushing thief", 7, 1)
+P2.add_move("ThiefBash")
+print(" ")
+time.sleep(2)
+
+battle(P1, P2)
+
+time.sleep(2)
+print(" ")
+print("The thief barely stands up after the fight, and runs for his life. Meanwhile, you can see a wall surrounding a castle in the distance. You decide to to that direction.")
+
+time.sleep(1)
+print(" ")
+print("You have arrived in the medieval city, strolling around 'till your eye catches a old man meditating in his backyard. You suddenly feel the urge to go and speak with him.")
+
+time.sleep(2)
+print(" ")
+print("Old man: 'Well hello there youn' whippersnapper! I can see there is something on your mind, mind me to tell what it is?'")
+time.sleep(1)
+print(" ")
+print("%s: 'Well you see, when i was attacked not so long ago, some sort of energy enveloped me, which made me stronger in the proces. But i don't get what is going on.'"%(nick))
+time.sleep(2)
+print(" ")
+print("Old man: 'Oh, you're talkin' about aura's. Well, let me explain it to you, whippersnapper. An aura is a creature's life force that surrounds them and gives them energy to live. However, some people (like you for example, i can see aura's of other people), have extraordinary types of aura's that boost their strength and moral to an extensive height. Do you mind telling me your name?'")
+time.sleep(2)
+print(" ")
+print("%s: 'It is %s.'" %(nick, nick))
+time.sleep(2)
+print(" ")
+print("Old man: 'My goodness, the prophecy has come out! My child, you are destined to save the world! You will need to head to the Drought Desert, so you can be prepared for the final fight! I will come with you!'")
+print(" ")
+time.sleep(2)
+print("%s: '...'" %nick)
+print(" ")
+time.sleep(2)
+print("Old man has joined your party! He has no fighting skills though :(")
+time.sleep(3)
+print(" ")
+print("It's morning now. You and the old man are leaving town, when suddenly, a black knight has arrived. He says: 'STOP RIGHT THERE! I will take that key with me, now hand it over or else!")
+time.sleep(2)
+print(" ")
+print("%s: 'I'd rather fight!'"%nick)
+time.sleep(2)
+print(" ")
+print("Black knight: 'Very well then, prepare to DIE!'")
+print(" ")
+
+P2 = Player("Black Knight",8 ,1)
+P2.add_move("GreatswordSlash")
+
+battle(P1, P2)
+
+time.sleep(2)
