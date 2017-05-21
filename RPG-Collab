@@ -648,7 +648,7 @@ print("The Black Knight prepares himself for revenge against you! It seemed he h
 time.sleep(2)
 print(" ")
 
-P2 = Player("Black Knight", 18, 1)
+P2 = Player("Black Knight", 16, 1)
 P2.add_move("GreatswordSlash")
 P2.add_move("Lifedrain")
 P2.add_type("Darkness")
@@ -702,7 +702,7 @@ print("Fire Demigod: 'You must be %s, i have been given the task to eliminate yo
 time.sleep(3)
 print(" ")
 
-P2 = Player("Fire Demigod", 25, 1.25)
+P2 = Player("Fire Demigod", 21, 1.25)
 P2.add_move("Hellwheel")
 P2.add_move("DemigodWingAttack")
 P2.add_type("Fire")
