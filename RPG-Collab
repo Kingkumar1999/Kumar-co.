@@ -596,7 +596,7 @@ if nick == "Cesar":
 time.sleep(3)
 print(" ")
 
-P2 = Player("Jellyfish", 15, 1)
+P2 = Player("Jellyfish", 15, 0.5)
 P2.add_move("Constrict")
 P2.add_move("Purify")
 P2.add_type("Water")
