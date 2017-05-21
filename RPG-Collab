@@ -5,8 +5,6 @@ import time
 import sys
 import random as rand
 
-class cesar:
-
 class Player:
   """The data for the players."""
   def __init__(self, name, hp, atk):
