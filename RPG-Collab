@@ -470,7 +470,7 @@ print("Suddenly, you see a bright light in the distance of the woods. %s and the
 time.sleep(3)
 print(" ")
 print("Old man: 'God save us, young un'! That is their spider queen!'")
-time.sleep(3)
+6time.sleep(3)
 print(" ")
 print("Spider queen: 'YOU HAVE INFILTRATED OUR FOREST, HUMAN! PREPARE TO SUFFER!")
 time.sleep(3)
@@ -480,8 +480,7 @@ print("The spider queen prepares herself for combat!")
 print(" ")
 time.sleep(3)
 
-P2 = Player("Spider Queen", 15, 1)
-P2.add_move("ToxicFangs")
+P2 = Player("Spider Queen", 15, 1)P2.add_move("ToxicFangs")
 P2.add_move("Swarm")
 P2.add_type("Darkness")
 
@@ -541,7 +540,7 @@ print(" ")
 P1.add_move(Moves(3))
 
 P1.maxHealth = P1.maxHealth + 3
-P1.health = P1.health + 3
+P1.health = P1.health + 6
 P1.attackPower = P1.attackPower + 0.5
 
 time.sleep(3)
