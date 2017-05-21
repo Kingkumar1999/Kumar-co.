@@ -539,8 +539,7 @@ print(" ")
 
 P1.add_move(Moves(3))
 
-P1.maxHealth = P1.maxHealth + 3
-P1.health = P1.health + 6
+P1.maxHealth = P1.maxHealth + 6
 P1.attackPower = P1.attackPower + 0.5
 
 time.sleep(3)
@@ -623,7 +622,7 @@ print(" ")
 Catname = input("Greg: 'That is an unusual cat there, i can sense a peculiar holy aura from it, that i have never seen from any other animal. We should take it with us, since i can't see any owner around here. Do you have a name for the cat, young whippersnapper?")
 time.sleep(7)
 print(" ")
-print("%s: 'I'd like to call it %s."%(nick, Catname)) 
+print("%s: 'I'd like to call it %s.'"%(nick, Catname)) 
 time.sleep(3)
 print(" ")
 print("%s: 'Mew!'"%Catname)
@@ -702,7 +701,7 @@ print("Fire Demigod: 'You must be %s, i have been given the task to eliminate yo
 time.sleep(3)
 print(" ")
 
-P2 = Player("Fire Demigod", 21, 1.25)
+P2 = Player("Fire Demigod", 18, 1.125)
 P2.add_move("Hellwheel")
 P2.add_move("DemigodWingAttack")
 P2.add_type("Fire")
