@@ -1,9 +1,6 @@
-
-#Copy paste your code from repl.it in here when you want to share it, make sure you're on a branch.
-#yup
 import time
 import sys
-import random as rand
+import random
 
 class Player:
   """The data for the players."""
@@ -49,6 +46,7 @@ class damaging(skills):
   """The  data for damaging skills."""
   def applyMove(self, user, target):
     print("%s used %s!"%(user.name,self.name))
+    print(" ")
     user.attackDamage = self.power * user.attackPower * user.aura
     damageDone = user.attackDamage * typeMatchup(user.types,target.types)
     target.health -= damageDone
@@ -56,6 +54,7 @@ class damaging(skills):
       print("The attack was super effective!")
     elif typeMatchup(user.types,target.types)==0.5:
       print("The attack was not very effective...")
+    print(" ")
     print("%s's health has been reduced to %d."%(target.name,target.health))
     if target.health < 1:
       target.life = False
@@ -72,6 +71,7 @@ class draining(skills):
   """The  data for draining skills."""
   def applyMove(self, user, target):
     print("%s used %s!"%(user.name,self.name))
+    print(" ")
     user.attackDamage = self.power * user.attackPower * user.aura
     damageDone = user.attackDamage * typeMatchup(user.types,target.types)
     target.health -= user.attackDamage
@@ -81,8 +81,28 @@ class draining(skills):
     elif typeMatchup(user.types,target.types)==0.5:
       print("The attack was not very effective...")
     print("%s's health has been reduced to %d and %s's health was increased to %d"%(target.name, target.health, user.name, user.health))
+    print(" ")
     if target.health < 1:
       target.life = False
+      
+class defending(skills):
+  """The data for defending skills."""
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    print(" ")
+    user.attackDamage = self.power * user.attackPower * user.aura
+    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
+    target.health -= damageDone
+    target.attackPower = target.attackPower * 0.75
+    if typeMatchup(user.types,target.types)==2:
+      print("The attack was super effective!")
+    elif typeMatchup(user.types,target.types)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    print(" ")
+    if target.health < 1:
+      target.life = False
+  
       
 def battle(guy,NME):
   print(" ")
@@ -107,7 +127,7 @@ def battle(guy,NME):
       print("You defeated the %s! You found a potion! All hp restored!"%NME.name)
       P1.health = P1.maxHealth
       break
-    move = rand.choice(NME.skills)
+    move = random.choice(NME.skills)
     for x in skills.instances:
         if x.name == move:
           if isinstance(x, healing):
@@ -130,15 +150,31 @@ Meme = damaging("Meme", 2, "A dank meme that makes enemies angry.")
 StonesNshit = damaging("StonesNshit", 1, "Rocks used by the stone golem to attack the player.")
 GoblinKnife = damaging("GoblinKnife", 1, "The goblin's knife used to attack the player.")
 Flames_of_Exile = damaging("Flames of Exile", 1, "A magical flame used to attack the player.")
-Hellwheel = damaging("Hellwheel", 3, "A bright-red flaming wheel rolling over targets to burn them to crisps.")
+Hellwheel = damaging("Hellwheel", 2.5, "A bright-red flaming wheel rolling over targets to burn them to crisps.")
 Woodslam = damaging("Woodslam", 2, "The user's entire body is covered in solid wood, and is slung towards the enemy.")
 Airjet = damaging("Airjet", 2, "A powerful wind that knocks down enemies.")
-Roast = damaging("Roast", 3, "An epic roast to pester enemies and make them angry.")
+Roast = damaging("Roast", 2.5, "An epic roast to pester enemies and make them angry.")
 ThiefBash = damaging("ThiefBash", 1, "A bash with a mace used by the thief to attack the player.")
 Purify = healing("Purify", 2, "A healing current of water that purifies any toxins and regenerates the player.")
-Heal = healing("Heal", 2, "A holy veil of light that envelops the player and heals any wounds.")
+Healing = healing("Healing", 2, "A holy veil of light that envelops the player and heals any wounds.")
 Lifedrain = draining("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.")
-GreatswordSlash = damaging("GreatswordSlash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.")    
+GreatswordSlash = damaging("GreatswordSlash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.") 
+ToxicFangs = draining("ToxicFangs", 1, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them")
+Rest = healing("Rest", 2, "An creature's skill to sleep for a short time in order to recover some hp back")
+Swarm = damaging("Swarm", 2, "An attack in which a creature commands it's followers to attack the player")
+TotemsFlashofLife = damaging("Totem's Flash of Life", 1, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player")
+Lavaflux = damaging("Lavaflux", 2.5, "A wave of lava controlled by a magnetic flux that engulves the enemy")
+Frostbite = draining("Frostbite", 2, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player")
+Quicksand = defending("Quicksand", 2, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output")
+Tornado = defending("Tornado", 2, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower")
+Lightspear = damaging("Lightspear", 2, "A spear made out of pure light that pierces enemies and purifies their soul from any sins")
+Riftsplit = damaging("Riftsplit", 2.5, "The player tears the enemy apart by beaming dark energy through their bodies")
+Smokeweed = healing("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp")
+ClawSmack = damaging("ClawSmack", 1.5, "A giant is smacked onto the player to inflict damage")
+Constrict = defending("Constrict", 1.5, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
+DemigodWingAttack = damaging("DemigodWingAttack", 2, "The signature attack of all demigods, where they use their wings to strike the player")
+
+
         
 def elementTxt(t):
   switcher = {
@@ -165,6 +201,7 @@ def typeMatchup(type1,type2):
     "WaterAir":0.5,
     "AirEarth":0.5,
     "EarthFire":0.5,
+    "SwagSwag":2,
   }
   return switcher.get(combo,1)
 
@@ -173,22 +210,26 @@ types = ['Fire','Water','Earth','Air','Light','Darkness','Swag']
 
 def Moves (num):
   allskills = {
-   'Fire': ["Wildfire", "Hellwheel"],
-   'Water': ["Splash", "Purify"],
-   'Earth': ["Tremor", "Woodslam"],
-   'Air': ["Gust", "Airjet"],
-   'Light': ["Flash", "Healing"],
-   'Darkness': ["Astonish", "Lifedrain"],
-   'Swag': ["Meme", "Roast"],
+   'Fire': ["Wildfire", "Hellwheel", "Lavaflux"],
+   'Water': ["Splash", "Purify", "Frostbite"],
+   'Earth': ["Tremor", "Woodslam", "Quicksand"],
+   'Air': ["Gust", "Airjet", "Tornado"],
+   'Light': ["Flash", "Healing", "Lightspear"],
+   'Darkness': ["Astonish", "Lifedrain", "Riftsplit"],
+   'Swag': ["Meme", "Roast", "Smokeweed"],
+   'Normal': [],
   }
   return allskills.get(BasicElement)[num-1]
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
+print("WARNING: Type nothing unless you are told to.")
+print(" ")
+time.sleep(3)
 
 print ("Welcome to Earth, a beautiful planet full of life...")
 
-time.sleep(2)
+time.sleep(3)
 
 while True:
   nick = input("Hello there! What is your name?")
@@ -206,7 +247,7 @@ while True:
     
 print(" ")
 
-time.sleep(1)
+time.sleep(3)
   
 while (True):
   BasicElement = input("In ancient times, there have been six elements of nature: Fire, Water, Earth, Air, Light and Darkness. Which element do you feel most connected with?")
@@ -224,7 +265,9 @@ while (True):
 print(" ")
 print ("And so, your adventure and quest begins...")
 
-time.sleep(2)
+#in the dungeon
+
+time.sleep(3)
 
 while True:
   Dungeon1choice =  input("300 a.c. You are in a dungeon. You walk until you find a passageway with three ways, one left, one right, and one straight before you. Which way should you go? Left, Right or Straight?")
@@ -257,13 +300,13 @@ while True:
 
 
   
-time.sleep(1)
+time.sleep(3)
 
 print(" ")
 
 print("You walk out the %s Path. You proceed to the inner tomb..."%Dungeon1choice)
 
-time.sleep(1)
+time.sleep(3)
 
 print(" ")
 print("You found the inner tomb. You can see all kinds of treasure lying around. Suddenly, you hear a cold and dread voice speaking: 'YOU COME TO STEAL MY TREASURE, AND YOU WILL NOW FEEL MY WRATH!'. Turning around, you see a levitating corpse with a crown. You have no choice but to battle him to get out of here alive...")
@@ -271,11 +314,11 @@ print("You found the inner tomb. You can see all kinds of treasure lying around.
 P2 = Player("DeadKing",7,1)
 P2.add_move("Flames of Exile")
 
-time.sleep(1)
+time.sleep(3)
 
 print(" ")
 print("The dead king of this tomb has appeared, and attacks you!")
-time.sleep(1)
+time.sleep(3)
 print(" ")
 print("However, you can feel an mysterious aura enveloping you. You feel stronger now!")
 P1.powerUp(1.5)
@@ -286,7 +329,7 @@ print(" ")
 print("The undead king has vanished, leaving no trace behind whatsoever. You gained experience, and leveled up! Your health, attack have increased, and you learned a new skill!")
 
 print(" ")
-time.sleep(1)
+time.sleep(3)
 
 P1.add_move(Moves(2))
 
@@ -296,60 +339,65 @@ P1.attackPower = P1.attackPower + 0.5
 
 print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
 
-time.sleep(2)
+time.sleep(3)
 
 print("You find a secret switch in the tomb, which opens a secret passage. You take the passage, and you arrive in a small hall. You can see a pedestal with a key lying on it. You take the key.")
 print(" ")
-time.sleep(2)
-print("You have gained the Ancient Key!")
+time.sleep(3)
+print("You have gained the Void Key!")
 print(" ")
-time.sleep(2)
+
+#outside the dungeon
+
+time.sleep(3)
 print("As you walk outside, you see a thief standing before you. He says: 'Hand over the good stuff or else!' He is holding a mace. You have to battle him!")
 
-time.sleep(2)
-P2 = Player("Ambushing thief", 7, 1)
+time.sleep(3)
+P2 = Player("Ambushing thief", 7, 1.5)
 P2.add_move("ThiefBash")
 print(" ")
-time.sleep(2)
+time.sleep(3)
 
 battle(P1, P2)
 
-time.sleep(2)
+time.sleep(3)
 print(" ")
-print("The thief barely stands up after the fight, and runs for his life. Meanwhile, you can see a wall surrounding a castle in the distance. You decide to to that direction.")
+print("The thief barely stands up after the fight, and runs for his life. Meanwhile, you can see a wall surrounding a castle in the distance. You decide to go to that direction.")
 
-time.sleep(1)
+#in the medieval city
+
+time.sleep(3)
 print(" ")
 print("You have arrived in the medieval city, strolling around 'till your eye catches a old man meditating in his backyard. You suddenly feel the urge to go and speak with him.")
 
-time.sleep(2)
+time.sleep(3)
 print(" ")
 print("Old man: 'Well hello there youn' whippersnapper! I can see there is something on your mind, mind me to tell what it is?'")
-time.sleep(1)
+time.sleep(3)
 print(" ")
 print("%s: 'Well you see, when i was attacked not so long ago, some sort of energy enveloped me, which made me stronger in the proces. But i don't get what is going on.'"%(nick))
-time.sleep(2)
+time.sleep(3)
 print(" ")
 print("Old man: 'Oh, you're talkin' about aura's. Well, let me explain it to you, whippersnapper. An aura is a creature's life force that surrounds them and gives them energy to live. However, some people (like you for example, i can see aura's of other people), have extraordinary types of aura's that boost their strength and moral to an extensive height. Do you mind telling me your name?'")
-time.sleep(2)
+time.sleep(8)
 print(" ")
 print("%s: 'It is %s.'" %(nick, nick))
-time.sleep(2)
+time.sleep(3)
 print(" ")
 print("Old man: 'My goodness, the prophecy has come out! My child, you are destined to save the world! You will need to head to the Drought Desert, so you can be prepared for the final fight! I will come with you!'")
 print(" ")
-time.sleep(2)
+time.sleep(4)
 print("%s: '...'" %nick)
 print(" ")
-time.sleep(2)
+time.sleep(3)
 print("Old man has joined your party! He has no fighting skills though :(")
 time.sleep(3)
 print(" ")
 print("It's morning now. You and the old man are leaving town, when suddenly, a black knight has arrived. He says: 'STOP RIGHT THERE! I will take that key with me, now hand it over or else!")
-time.sleep(2)
+time.sleep(3)
 print(" ")
 print("%s: 'I'd rather fight!'"%nick)
-time.sleep(2)
+time.sleep(3)
 print(" ")
 print("Black knight: 'Very well then, prepare to DIE!'")
 print(" ")
@@ -359,4 +407,309 @@ P2.add_move("GreatswordSlash")
 
 battle(P1, P2)
 
+time.sleep(3)
+
+print(" ")
+print("Black Knight: 'Augh! I may have lost, but i will return, and when that day comes, you will tremble in fear of me!'The Black Knight leaves.")
+time.sleep(3)
+print(" ")
+print("%s: 'Okay, he's gone. Where do we need to head?'"%nick)
+time.sleep(3)
+print(" ")
+print("Old man: 'We need to pass through Elder Woods first, youngster .'")
+
+time.sleep(3)
+print(" ")
+print("...")
+time.sleep(5)
+#in the Woods
+
+print(" ")
+print("You and the old man have arrived in Elder Woods. It's kinda murky there. %s: 'What is this for eerie and dirty place?'" %nick)
+print(" ")
+time.sleep(3)
+print("Old man: 'These woods are said to contain enormous spiders , that will grab you if you don't watch out for them.'")
+time.sleep(3)
+print(" ")
+print("Suddenly, you see something light-grey lying under a tree, with flies swarming around it. You come closer to take a look, only to see that it turns out to be a decaded body, that has been covered in string. You hear hissing above you.")
+time.sleep(3)
+print(" ")
+print("Old man: 'Watch out! A spider!'")
+time.sleep(3)
+print(" ")
+print("The spider uses it's string to come down. It must be at least 1 meter high, it is enormous. The spider prepares to fight!")
+
+print(" ")
+
+P2 = Player("Wood Spider", 10, 1.5)
+P2.add_move("ToxicFangs")
+P2.add_move("Rest")
+P2.add_type("Darkness")
+
+battle(P1, P2)
+
+print(" ")
+
+time.sleep(3)
+print("The spider is heavily wounded, and flees and crawls over the trees to escape. %s: 'Phew, that was close, but i think i have been' - ugh - 'poisoned...'"%nick)
+time.sleep(3)
+print(" ")
+print("Old man: 'Let me use my special purification power to cure that poison, for you, whippersnapper.'")
+time.sleep(3)
+print(" ")
+print("The old man cured your poison!")
+print(" ")
+time.sleep(3)
+print("...")
+time.sleep(5)
+print(" ")
+print("%s and the old man have been walking through the woods for a couple of hours. You have been seeing dead bodies wrapped in string all over the place. %s: 'I don't like the look of this place...'"%(nick, nick))
+time.sleep(3)
+print(" ")
+print("Suddenly, you see a bright light in the distance of the woods. %s and the old man walk towards it, when suddenly, they see a spider much bigger than the other spiders seen and battled so far."%nick)
+time.sleep(3)
+print(" ")
+print("Old man: 'God save us, young un'! That is their spider queen!'")
+time.sleep(3)
+print(" ")
+print("Spider queen: 'YOU HAVE INFILTRATED OUR FOREST, HUMAN! PREPARE TO SUFFER!")
+time.sleep(3)
+print(" ")
+print("The spider queen prepares herself for combat!")
+
+print(" ")
+time.sleep(3)
+
+P2 = Player("Spider Queen", 15, 1)
+P2.add_move("ToxicFangs")
+P2.add_move("Swarm")
+P2.add_type("Darkness")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("The spider queen recovers, and is about to attack you when suddenly, a green flash of light appears from the distance that scares of the spiders. None of them stayed to attack you or the old man.")
+time.sleep(3)
+print(" ")
+print("%s: 'I wonder why they all fled?'"%nick)
+print(" ")
+time.sleep(3)
+print("Old man: 'They fled from the energy that emanates from that place up ahead. That is probably the place of one of the seven elemental keys. You see, that key you've got there youngster, is the void attribute key, and there are six more attribute keys left. You will need them all in order to open the gate to unleash the evil and defeat it.'")
+time.sleep(5)
+print(" ")
+print("%s: 'That is a lot of information...'"%nick)
+time.sleep(3)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("%s and old man arrived at the distant place. It appears to be a sort of shrine surrounded by grass, with a pedestal in the middle of it that can be compared with the one in the dungeon earlier. On the pedestal lies an iron key with green gems and accents in it."%nick)
+time.sleep(3)
+print(" ")
+print("%s: 'There it is! Wait, what is that?!'"%nick)
+time.sleep(3)
+print(" ")
+print("As they approach the shrine, something emerges from the grassy ground. It appears to be made out of wood, and it is partially covered in grass and plants. Some sort of totem has emerged.")
+time.sleep(3)
+print(" ")
+print("The forest guardian totem has layed it's flashing eyes on you! You will need to defeat it in order to gain the Forest Key!")
+time.sleep(3)
+print(" ")
+
+P2 = Player("Forest Totem", 50, 0.5)
+P2.add_move("Totem's Flash of Life")
+P2.add_move("Rest")
+P2.add_type("Earth")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("The totem has been defeated, it steps back into the grassy ground where it came from, and disappears. You walk over to the pedestal, and the Forest key is granted to you!")
+time.sleep(3)
+print(" ")
+print("You have gained the Forest Key! You now have the Void Key and the Forest Key! Unobtained keys left: 5")
+
+time.sleep(3)
+print(" ")
+print("You have leveled up! Your health and attack have increased, and you've learned a new skill!")
+
+time.sleep(3)
+print(" ")
+
+P1.add_move(Moves(3))
+
+P1.maxHealth = P1.maxHealth + 3
+P1.health = P1.health + 3
+P1.attackPower = P1.attackPower + 0.5
+
+time.sleep(3)
+print(" ")
+print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
+
+time.sleep(3)
+print(" ")
+print("%s: 'Well that is that, i can see the other way out of the forest, let's go now.'"%nick)
+time.sleep(5)
+print(" ")
+print("...")
+print(" ")
+time.sleep(3)
+print("As they walk out of the forest, they, strangly enough, find themselves on a beach. They can see some tropical trees here and there.")
+print(" ")
+time.sleep(3)
+print("%s: 'I have one question to ask you though. What is your name?'"%nick)
+print(" ")
+time.sleep(3)
+print("Old man: 'It is Greg.'")
+print(" ")
+time.sleep(3)
+print("%s: 'Nice name.'"%nick)
+time.sleep(3)
+print(" ")
+print("Greg: I know right?'")
+time.sleep(3)
+print(" ")
+print("%s and Greg walk over the beach, when suddenly, a giant crab and a levitating jellyfish stand in their way. They seem to be threatening our heroes. %s will need to fight them!"%(nick,nick))
+
+time.sleep(3)
+print(" ")
+print("The giant crab charges towards you! You will need to battle it first!")
+print(" ")
+time.sleep(3)
+
+P2 = Player("Giant Crab", 14, 1.5)
+P2.add_move("ClawSmack")
+P2.add_move("Splash")
+P2.add_type("Water")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("The giant crab skewaddles back into the sea, but now the jellyfish approaches and attacks!")
+print(" ")
+time.sleep(3)
+if nick == "Cesar":
+  print("%s: 'Ugh! I hate jellyfish!'"%nick)
+  
+time.sleep(3)
+print(" ")
+
+P2 = Player("Jellyfish", 20, 1)
+P2.add_move("Constrict")
+P2.add_move("Purify")
+P2.add_type("Water")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("As the jellyfish is defeated, it flees back into sea.")
+time.sleep(3)
+print(" ")
+print("%s: 'I wonder why they attacked us? Perhaps it is an evil force?'"%nick)
+time.sleep(3)
+print(" ")
+print("Greg: 'It seems that many creatures have taken notice of your presence youngster, the one of the prophecy. We have to be careful.'")
+time.sleep(3)
+print(" ")
+print("As you and Greg walk further on the beach, you can see a white, big cat sleeping under a palm tree. You approach the cat and pick it up.")
+time.sleep(3)
+print(" ")
+print("'Meow?'")
 time.sleep(2)
+print(" ")
+Catname = input("Greg: 'That is an unusual cat there, i can sense a peculiar holy aura from it, that i have never seen from any other animal. We should take it with us, since i can't see any owner around here. Do you have a name for the cat, young whippersnapper?")
+time.sleep(7)
+print(" ")
+print("%s: 'I'd like to call it %s."%(nick, Catname)) 
+time.sleep(3)
+print(" ")
+print("%s: 'Mew!'"%Catname)
+time.sleep(3)
+print(" ")
+print("Greg: 'Let's move on.'")
+time.sleep(3)
+print(" ")
+print("%s, Greg and %s are walking further down the beach, when suddenly, they hear yelling behind them." %(nick, Catname))
+time.sleep(3)
+print(" ")
+print("Black Knight: 'HEY! I'm back for revenge kid! Hand over that key, or i will use my newly awakend power to defeat you!'")
+time.sleep(3)
+print(" ")
+print("%s: 'Oh boy here we go again...'"%nick)
+time.sleep(2)
+print(" ")
+print("%s: 'Meow'"%Catname)
+time.sleep(2)
+print(" ")
+print("The Black Knight prepares himself for revenge against you! It seemed he has gained an attribute!")
+time.sleep(2)
+print(" ")
+
+P2 = Player("Black Knight", 18, 1)
+P2.add_move("GreatswordSlash")
+P2.add_move("Lifedrain")
+P2.add_type("Darkness")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("Black Knight: 'NO! I lost again to this kid! I won't forget this, i will return!' The Black Knight leaves.")
+time.sleep(3)
+print(" ")
+print("%s: 'Why does that guy follow me around all the time?'"%nick)
+time.sleep(3)
+print(" ")
+print("Greg: He wants that key of yours whippersnapper, although he probably thinks that it is for some treasure-filled chest. He does not realize that the key's function is far greater than that.'")
+time.sleep(3)
+print(" ")
+print("%s: 'Over there! A spring! But i don't know if that water is healthy... and it's almost dried up..."%nick)
+time.sleep(3)
+print(" ")
+print("Greg: 'I'm thirsty youngster, let me drink some!'")
+time.sleep(3)
+print(" ")
+print("*Greg sprints to the spring, and drinks the last bit of water in the spring. Suddenly, his body begins to change, his bones become denser, his skin becomes smoother, his hairs gain more colour. Greg has turned young!")
+time.sleep(3)
+print(" ")
+print("%s: 'Wha-'")
+time.sleep(1)
+print(" ")
+print("Greg: 'I'm young again, and i can talk normal now!'")
+time.sleep(2)
+print(" ")
+print("%s: '...'")
+time.sleep(2)
+print(" ")
+print("%s: 'Meow'"%Catname)
+time.sleep(3)
+print(" ")
+print("*Boom!")
+time.sleep(3)
+print(" ")
+print("%s & Greg: '?'"%nick)
+print(" ")
+print("%s: 'Meow?'"%Catname)
+time.sleep(3)
+print(" ")
+print("As they turn around, they see a person with huge, flaming wings floating.")
+time.sleep(3)
+print(" ")
+print("Fire Demigod: 'You must be %s, i have been given the task to eliminate you! My creator does not want you to stop him, so you will perish now!'"%nick)
+time.sleep(3)
+print(" ")
+
+P2 = Player("Fire Demigod", 25, 1.25)
+P2.add_move("Hellwheel")
+P2.add_move("DemigodWingAttack")
+P2.add_type("Fire")
+
+battle(P1, P2)
+
+time.sleep(3)
+print(" ")
+print("Fire Demigod: 'Urgh, i haven't been hurt by any mortal this much, you will see me again mortal, and when you will, i will DESTROY you!' The demigod takes off.")
