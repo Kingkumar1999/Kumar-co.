@@ -1,8 +1,11 @@
+
 #Copy paste your code from repl.it in here when you want to share it, make sure you're on a branch.
 #yup
 import time
 import sys
 import random as rand
+
+class cesar:
 
 class Player:
   """The data for the players."""
