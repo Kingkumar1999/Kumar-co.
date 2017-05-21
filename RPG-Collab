@@ -333,7 +333,7 @@ time.sleep(3)
 
 P1.add_move(Moves(2))
 
-P1.maxHealth = P1.maxHealth + 3
+P1.maxHealth = P1.maxHealth + 4
 P1.health = P1.health + 3
 P1.attackPower = P1.attackPower + 0.5
 
@@ -516,7 +516,7 @@ print("The forest guardian totem has layed it's flashing eyes on you! You will n
 time.sleep(3)
 print(" ")
 
-P2 = Player("Forest Totem", 50, 0.5)
+P2 = Player("Forest Totem", 30, 0.25)
 P2.add_move("Totem's Flash of Life")
 P2.add_move("Rest")
 P2.add_type("Earth")
@@ -662,6 +662,7 @@ print(" ")
 print("%s: 'Why does that guy follow me around all the time?'"%nick)
 time.sleep(3)
 print(" ")
+
 print("Greg: He wants that key of yours whippersnapper, although he probably thinks that it is for some treasure-filled chest. He does not realize that the key's function is far greater than that.'")
 time.sleep(3)
 print(" ")
@@ -711,3 +712,34 @@ battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Fire Demigod: 'Urgh, i haven't been hurt by any mortal this much, you will see me again mortal, and when you will, i will DESTROY you!' The demigod takes off.")
+
+time.sleep(3)
+print(" ")
+print("%s: 'What was that?'"%nick)
+time.sleep(2)
+print(" ")
+print("Greg: 'That was one of the elemental demigods. They were created by the evil overlord, and they serve him. I think he is aware of your presence, %s.'"%nick)
+time.sleep(2)
+print(" ")
+print("...")
+time.sleep(4)
+print(" ")
+print("As %s, Greg and %s reach the end of the beach, they can see an opening of a cave. A number of shells inside the cave's walls indicate that this is a seaward cave. They head inside."%(nick, Catname))
+time.sleep(3)
+print(" ")
+print("Once they're inside, they can see that on the other side is a massive, deep and bright-blue lake. They walk to the other end, when they are attacked by a swarm of bats!")
+time.sleep(2)
+print(" ")
+print("%s: 'Ugh, get away from me!'"%nick)
+time.sleep(2)
+print(" ")
+
+P2 = Player("Bat swarm", 10, 1.5)
+P2.add_move("Lifedrain")
+P2.add_type("Air")
+
+battle(P1, P2)
+
+time.sleep(2)
+print(" ")
+print("")
