@@ -171,7 +171,7 @@ Lightspear = damaging("Lightspear", 2, "A spear made out of pure light that pier
 Riftsplit = damaging("Riftsplit", 2.5, "The player tears the enemy apart by beaming dark energy through their bodies")
 Smokeweed = healing("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp")
 ClawSmack = damaging("ClawSmack", 1.5, "A giant is smacked onto the player to inflict damage")
-Constrict = defending("Constrict", 1.5, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
+Constrict = defending("Constrict", 1.25, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
 DemigodWingAttack = damaging("DemigodWingAttack", 2, "The signature attack of all demigods, where they use their wings to strike the player")
 
 
@@ -596,7 +596,7 @@ if nick == "Cesar":
 time.sleep(3)
 print(" ")
 
-P2 = Player("Jellyfish", 20, 1)
+P2 = Player("Jellyfish", 15, 1)
 P2.add_move("Constrict")
 P2.add_move("Purify")
 P2.add_type("Water")
