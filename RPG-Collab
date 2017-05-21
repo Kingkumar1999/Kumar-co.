@@ -172,7 +172,7 @@ Riftsplit = damaging("Riftsplit", 2.5, "The player tears the enemy apart by beam
 Smokeweed = healing("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp")
 ClawSmack = damaging("ClawSmack", 1.5, "A giant is smacked onto the player to inflict damage")
 Constrict = defending("Constrict", 1.25, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
-DemigodWingAttack = damaging("DemigodWingAttack", 2, "The signature attack of all demigods, where they use their wings to strike the player")
+DemigodWingAttack = damaging("DemigodWingAttack", 1.75, "The signature attack of all demigods, where they use their wings to strike the player")
 
 
         
@@ -540,7 +540,7 @@ print(" ")
 P1.add_move(Moves(3))
 
 P1.maxHealth = P1.maxHealth + 6
-P1.attackPower = P1.attackPower + 0.5
+P1.attackPower = P1.attackPower + 1
 
 time.sleep(3)
 print(" ")
@@ -701,7 +701,7 @@ print("Fire Demigod: 'You must be %s, i have been given the task to eliminate yo
 time.sleep(3)
 print(" ")
 
-P2 = Player("Fire Demigod", 18, 1.125)
+P2 = Player("Fire Demigod", 18, 1.1)
 P2.add_move("Hellwheel")
 P2.add_move("DemigodWingAttack")
 P2.add_type("Fire")
