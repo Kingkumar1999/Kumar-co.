@@ -545,7 +545,7 @@ P1.attackPower = P1.attackPower + 0.5
 
 time.sleep(3)
 print(" ")
-print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
+2print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
 
 time.sleep(3)
 print(" ")
@@ -578,7 +578,7 @@ print("The giant crab charges towards you! You will need to battle it first!")
 print(" ")
 time.sleep(3)
 
-P2 = Player("Giant Crab", 14, 1.5)
+P2 = Player("Giant Crab", 14, 1.25)
 P2.add_move("ClawSmack")
 P2.add_move("Splash")
 P2.add_type("Water")
