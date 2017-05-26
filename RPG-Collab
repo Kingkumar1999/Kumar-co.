@@ -2,246 +2,484 @@ import time
 import sys
 import random
 import numpy as np
+import math
 
-class Player:
+class elements:
+  """This is the data for elements."""
+  def __init__(self, name, discription):
+    self.name = name
+    self.discription = discription
+  @staticmethod
+  def typeMatchup(user,target):
+    combo = "%s%s"%(user.element,target.element)
+    switcher = {
+      "FireEarth":2,
+      "EarthAir":2,
+      "AirWater":2,
+      "WaterFire":2,
+      "LightDarkness":2,
+      "DarknessLight":2,
+      "FireWater":0.5,
+      "WaterAir":0.5,
+      "AirEarth":0.5,
+      "EarthFire":0.5,
+      "SwagSwag":2,
+    }
+    return switcher.get(combo,1)
+    
+  def desc(self):
+    print(self.discription)
+    
+FIRE = elements("Fire","So you choose fire, you must be a fiery person then(no puns intended). You have a lot of firepower, but you can get angered quickly. Your class is: [ATTACK], skills are: [Wildfire]")
+WATER = elements("Water","So you choose water eh? You like to swim a lot, do you? You are a tender person that cares for others. Your class is: [SUPPORT], skills are: [Splash]")
+EARTH = elements("Earth","You choose earth, the best element jk. You are a strong and worthy person, and you can lift boulders and other stuff. Your class is: [DEFENSE], skills are: [Tremor]")    
+AIR = elements("Air","Air?! Is that even a natural element?! Of course it is! Remember: don't crash into mountains! Your class is: [DEFENSE], skills are: [Gust]")
+LIGHT = elements("Light","Your choice is light, a noble element with honour. We expect you to have such honour as well, otherwise the gods will punish you! Your class is: [SUPPORT], skills are: [Flash]")
+DARKNESS = elements("Darkness","You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]")
+SWAG = elements("Swag","Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]")
+
+class effects(elements):
+  """The data for move/item effects."""
+  def __init__(self, name, discription):
+    super(effects,self).__init__(name, discription)
+  
+  @staticmethod
+  def NO_EFFECT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.66)
+    
+    damageDone = user.attackDamage * (target.stat_changes[1]*1.2)#intergrating defense?
+    math.ceil(damageDone)
+    target.health -= damageDone
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    
+  @staticmethod
+  def DUAL_HIT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.66)
+    damageDone = user.attackDamage * (target.stat_changes[1]*1.2)#intergrating defense?
+    math.ceil(damageDone)
+    target.health -= damageDone
+    target.health -= damageDone
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    
+  @staticmethod
+  def MULTI_HIT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.66)
+    damageDone = user.attackDamage * (target.stat_changes[1]*1.2)#intergrating defense?
+    math.ceil(damageDone)
+    for a in range(2,random.randint(2,5)): #this means 2 to 5 attacks, values can be tweaked
+      target.health -= damageDone
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    
+  @staticmethod
+  def DRAINING(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.66)
+    damageDone = user.attackDamage * (target.stat_changes[1]*1.2)#intergrating defense?
+    healingDone = 0.5 * damageDone
+    math.ceil(damageDone)
+    math.ceil(healingDone)
+    target.health -= damageDone
+    user.health += healingDone
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    
+  @staticmethod
+  def ATTACK_DROP1(move, user, target):
+    target.stat_changes[0]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def ATTACK_DROP2(move, user, target):
+    target.stat_changes[0]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def ATTACK_BOOST1(move, user, target):
+    target.stat_changes[0]+= 1 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def ATTACK_BOOST2(move, user, target):
+    target.stat_changes[0]+= 2 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def DEFENCE_DROP1(move, user, target):
+    target.stat_changes[1]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def DEFENCE_DROP2(move, user, target):
+    target.stat_changes[1]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def DEFENCE_BOOST1(move, user, target):
+    target.stat_changes[1]+= 1 #This is simple I suppose, just copy this and change the name for other stats
+    
+  @staticmethod
+  def DEFENCE_BOOST2(move, user, target):
+    target.stat_changes[1]+= 2 #This is simple I suppose, just copy this and change the name for other stats  
+    
+  @staticmethod
+  def RECOVER(move, user, target):
+    healingDone = move.power * user.aura #self.power is hierbij de hoeveelheid hp die je krijgt.
+    math.ceil(healingDone)
+    user.health += healingDone
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    print("%s's health has been increased to %d."%(user.name,user.health))
+    
+  @staticmethod
+  def BERSERK(move, user, target):
+    if user.health<(user.maxHealth/2):
+      effects.ATTACK_BOOST2(move, user, target)
+      
+  @staticmethod
+  def BANDAGE(move, user, target):  
+    print("%s used a bandage."%user.name)
+    user.health += 5
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    print("%s's health has been increased to %d."%(user.name,user.health))
+  
+class inventory:
+  """The team's inventory"""
+  instances = []
+  def __init__(self, name):
+    self.name = name
+    
+  def check_has(self,item):
+    return bool(item.name in self.instances)
+        
+  def add_item(self, item, amount):
+    for x in range(0,amount):
+      if len(self.instances)>20: 
+        if x==0:
+          print("The inventory is full.")
+        break
+      else:
+        if self.check_has(item):
+          self.instances[item.name] += 1
+        else:
+          self.instances.append({item.name:1})
+    print("You now have %d %s's."%(self.instances[item.name],item.name))
+            
+  def remove_item(self, item, amount):
+    for x in range(0,amount):
+      if self.check_has(item):
+        self.instances[item.name] -= 1
+        if self.instances[item.name] == 0:
+          del self.instances[item.name]
+          break
+      else:
+        if x == 0:
+          print("You don't have this item!")  
+        break  
+    print("You now have %d %s's."%(self.instances[item.name],item.name))
+
+class Character:
   """The data for the players."""
-  def __init__(self, name, hp, atk):
+  def __init__(self, name, hp, atk, defen):
         self.name = name
         self.health = hp
         self.maxHealth = hp
         self.attackPower = atk
+        self.defencePower = defen
         self.life = True
-        self.attackDamage = 0
         self.skills= []
-        self.aura=1
-        self.types= "Normal"
+        self.aura=1 #justCesarThings
+        self.element= "Normal"
+        self.stat_changes = [0, 0] #First one is attack, second is defence
   def use_move(self, target, move):
         move.applyMove(self,target)
   def add_move(self, move):
-        self.skills.append(move)
-        print("%s has learned %s!"%(self.name,move))
-        for x in skills.instances:
-          if x.name == move:
-            print(x.discription)
-            break
-        time.sleep(3)
-        print(" ")
+        self.skills.append(move.name)
+        print("%s has learned %s!"%(self.name,move.name))
+        print(move.discription)
   def powerUp(self, newAura):
         self.aura = newAura
   def add_type(self,Element):
-        self.types = Element
+        self.element = Element
         print("%s is a %s type!"%(self.name,Element))
 
-class skills:
+class party(Character,inventory):
+  """The data for party members."""
+  def __init__(self, *args):
+    super(party,self).__init__(*args)
+    self.battlegear = {}
+    self.actives = {}
+    
+  def use(self, item):
+    if isinstance(item,consumeable) == False:
+      print("You can't do that with this item!")
+      return None
+    print("%s used a %s."%(self.name, item.name))
+    self.instances[item.name] -= 1
+    for x in item.effect:
+      switchers.item[x](None, self, self)
+    
+  def equip(self,item):
+    if isinstance(item,equipable) == False:
+      print("You can't do that with this item!")
+      return None
+    if self.check_has(item):
+      if item.position in self.battlegear:
+        print("You're already wearing an item in this position!")
+      else:
+        self.battlegear[item.position] = item.name
+        self.actives[item.name] = item.effect
+        self.defencePower += item.armor
+        print("You equipped the %s."%item.name)
+    else:
+      print("You do not have this item!")
+    
+  def unequip(self,item):
+    if isinstance(item,equipable) == False:
+      print("You can't do that with this item!")
+      return None
+    if item.position in self.battlegear:
+      self.defencePower -= item.armor
+      del self.battlegear[item.position]
+      del self.actives[item.name]
+      print("You have unequipped %s."%item.name)
+    else:
+      print("You're not wearing a %s."%item.name)
+      
+class enemy(Character):
+  """The data for enemies."""
+  def __init__(self, name, hp, atk, defen, *loot):
+    super(enemy,self).__init__(name, hp, atk, defen)
+    self.loot = loot
+  def droploot(self, target):
+    for x in self.loot:
+      target.add_item(x,1)
+
+class skills(effects):
   """The general data for the skills."""
   instances = []
-  def __init__(self, name, power, discription):
+  def __init__(self, name, power, discription, *effect):
     self.name = name
     self.power = power
     self.discription = discription
-    self.__class__.instances.append(self)
+    self.__class__.instances.append(self.name)
+    self.effect = effect
   def desc(self):
     print(self.discription)
-
-class damaging(skills):
-  """The  data for damaging skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, dealing damage!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print(" ")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    if target.health < 1:
-      target.life = False
-    
-class healing(skills):
-  """The  data for healing skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, recovering some hp!"%(user.name,self.name))
-    user.attackDamage = self.power * user.aura
-    target.health += user.attackDamage
-    print("%s's health has been increased to %d."%(target.name,target.health))
-    
-class draining(skills):
-  """The  data for draining skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, draining some health!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= user.attackDamage
-    user.health += 0.5 * damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d and %s's health was increased to %d"%(target.name, target.health, user.name, user.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-      
-class defending(skills):
-  """The data for defending skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, reducing enemy attack power!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= damageDone
-    target.attackPower = target.attackPower * 0.75
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-
-class dualhit(skills):
-  """The data for dual hitting skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, hitting twice!"%(user.name,self.name))
-    print(" ")
-    chance = np.random.uniform(0.2, 0.6)
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = (chance * user.attackDamage * typeMatchup(user.types,target.types)) + (chance * user.attackDamage * typeMatchup(user.types,target.types))
-    target.health -= damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-      
-def battle(guy,  NME):
-  print(" ")
-  print("The battle between %s and %s commences!"%(guy.name,NME.name))
-  while True:
-    i = 0
-    while i==0:
-      print("Skills available to you:")
-      for x in guy.skills:
-        print(x)
-      move = input("Which skill do you want to use?")
-      for x in skills.instances:
-        if x.name == move and x.name in guy.skills:
-          if isinstance(x, healing):
-            guy.use_move(guy,x)
-          else:
-            guy.use_move(NME,x)
-          i = 1
-          break 
-    if NME.life==False:
-      print("%s has won the battle!"%guy.name)
-      print("You defeated the %s! You found a potion! All hp restored!"%NME.name)
-      P1.health = P1.maxHealth
-      break
-    move = random.choice(NME.skills)
-    for x in skills.instances:
-        if x.name == move:
-          if isinstance(x, healing):
-            NME.use_move(NME,x)
-          else:
-            NME.use_move(guy,x)
-          i = 1
-          break
-    if guy.life==False:
-      print("%s was slain in battle! You lost the game!"%guy.name)
-      sys.exit()      
-
-Wildfire= damaging("Wildfire", 2, "A small fire that burns enemies.")
-Splash = damaging("Splash", 1.5, "A jet of water that damages enemies.")
-Tremor = damaging("Tremor", 2, "A small quake that makes enemies tremble.")
-Gust = damaging("Gust", 1.5, "A windy blast that blows enemies away.")
-Flash = damaging("Flash", 1.5, "A weak flash of light that hurts enemies.")
-Astonish = damaging("Astonish", 2, "A sudden movement that scares of enemies.")
-Meme = damaging("Meme", 2, "A dank meme that makes enemies angry.")
-BoulderDrop = damaging("Boulder Drop", 1, "Rocks used by the stone golem to attack the player.")
-GoblinKnife = dualhit("GoblinKnife", 1, "The goblin's knife used to attack the player.")
-Flames_of_Exile = damaging("Flames of Exile", 1, "A magical flame used to attack the player.")
-Hellwheel = damaging("Hellwheel", 2.5, "A bright-red flaming wheel rolling over targets to burn them to crisps.")
-Woodslam = damaging("Woodslam", 2, "The user's entire body is covered in solid wood, and is slung towards the enemy.")
-Airjet = damaging("Airjet", 2, "A powerful wind that knocks down enemies.")
-Roast = damaging("Roast", 2.5, "An epic roast to pester enemies and make them angry.")
-ThiefBash = dualhit("ThiefBash", 1, "A bash with a mace used by the thief to attack the player.")
-Purify = healing("Purify", 2, "A healing current of water that purifies any toxins and regenerates the player.")
-Healing = healing("Healing", 2, "A holy veil of light that envelops the player and heals any wounds.")
-Lifedrain = draining("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.")
-GreatswordSlash = damaging("Greatsword Slash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.") 
-ToxicFangs = draining("ToxicFangs", 1, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them")
-Rest = healing("Rest", 2, "An creature's skill to sleep for a short time in order to recover some hp back")
-Swarm = damaging("Swarm", 2, "An attack in which a creature commands it's followers to attack the player")
-TotemsFlashofLife = damaging("Totem's Flash of Life", 1, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player")
-Lavaflux = damaging("Lavaflux", 3, "A wave of lava controlled by a magnetic flux that engulves the enemy")
-Frostbite = draining("Frostbite", 2, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player")
-Quicksand = defending("Quicksand", 2, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output")
-Tornado = defending("Tornado", 2, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower")
-Lightspear = damaging("Lightspear", 2, "A spear made out of pure light that pierces enemies and purifies their soul from any sins")
-Riftsplit = dualhit("Riftsplit", 2.5, "The player tears the enemy apart by beaming dark energy through their bodies")
-Smokeweed = healing("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp")
-ClawSmack = damaging("ClawSmack", 1.25, "A giant claw is smacked onto the player to inflict damage")
-Constrict = defending("Constrict", 1.5, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
-DemigodWingAttack = dualhit("Demigod Wing Attack", 1.75, "The signature attack of all demigods, where they use their wings to strike the player")
-Cut = dualhit("Cut", 1.25, "A standard move that uses a sharp object to cut something into pieces")
-LeviathanHydroStorm = damaging("Leviathan Hydro Storm", 2, "A huge storm of water, ice and lightning conjured by the Leviathan to test the player's worth")
-Ignite = defending("Ignite", 2.5, "A long-lasting flame that wears down enemies and lowers their attack power")
-Whirlpool = damaging("Whirlpool", 2.5, "A maelstrom of water that traps foes and inflicts damage")
-Gaiaslide = damaging("Gaiaslide", 2.5, "A wave of land that engulves enemies and does damage")
-Lightning = damaging("Lightning", 2.5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage")
-Deityblade = dualhit("Deityblade", 2.5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage")
-Bloodlust = draining("Bloodlust", 2.5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp") 
-Swagburn = defending("Swagburn,", 2.5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power")
-Slash = damaging("Slash", 1, "A non-attribute attack that involves slashing the enemy with sharp claws to deal damage")
-CrystalJab = draining("Crystal Jab", 2, "Magical crystals are used to jab the foe to inflict damage and drain some hp with those crystals to recover some hp")
-FoulMiasma = defending("Foul Miasma", 1.25, "A horrible poisonous breath that weakens the enemy's attack power")
-EagleSkyCrash = damaging("Eagle Sky Crash", 2, "The user soars into the sky, then drops to greatly increase their speed and strike the foe with massive force")
-Combustion = damaging("Combustion", 3, "A large explosion that heavily scorches enemies to the bone")
-Drainage = healing("Drainage", 3, "The user absorbs nutrients from the water that restore some hp")
-Stonetomb = defending("Stone tomb", 3, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them")
-Vortex = defending("Vortex", 3, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power")
-Blessing = healing("Blessing", 3, "Praying to the gods, the user gains their blessing and has some of their hp restored")
-Darkeclipse = damaging("Dark eclipse", 3, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage")
-Memeoverdose = damaging("Meme overdose", 3, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them")
-Arrowfire = dualhit("Arrowfire", 1.25, "The user uses a bow and fires of a couple of arrows to pierce the target and inflict damage")
-Brewing = healing("Brewing", 2.5, "The user uses their knowledge of alchemy to brew a potion and consume it to restore hp")
-        
-def elementTxt(t):
-  switcher = {
-    'Fire': "So you choose fire, you must be a fiery person then(no puns intended). You have a lot of firepower, but you can get angered quickly. Your class is: [ATTACK], skills are: [Wildfire]",
-    'Water': "So you choose water eh? You like to swim a lot, do you? You are a tender person that cares for others. Your class is: [SUPPORT], skills are: [Splash]",
-    'Earth': "You choose earth, the best element jk. You are a strong and worthy person, and you can lift boulders and other stuff. Your class is: [DEFENSE], skills are: [Tremor]",
-    'Air': "Air?! Is that even a natural element?! Of course it is! Remember: don't crash into mountains! Your class is: [DEFENSE], skills are: [Gust]",
-    'Light': "Your choice is light, a noble element with honour. We expect you to have such honour as well, otherwise the gods will punish you! Your class is: [SUPPORT], skills are: [Flash]",
-    'Darkness': "You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]",
-    'Swag': "Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]",
-  }
-  return switcher.get(t)
   
-def typeMatchup(type1,type2):
-  combo = "%s%s"%(type1,type2)
-  switcher = {
-    "FireEarth":2,
-    "EarthAir":2,
-    "AirWater":2,
-    "WaterFire":2,
-    "LightDarkness":2,
-    "DarknessLight":2,
-    "FireWater":0.5,
-    "WaterAir":0.5,
-    "AirEarth":0.5,
-    "EarthFire":0.5,
-    "SwagSwag":2,
-  }
-  return switcher.get(combo,1)
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    for x in self.effect:
+      if x in switchers.early:
+        switchers.early[x](self, user, target)
+    for x in self.effect:
+      if x in switchers.middle:
+        switchers.middle[x](self, user, target)
+    for x in self.effect:
+      if x in switchers.late:
+        switchers.late[x](self, user, target)
+    
+class items(effects):
+  """The general data for the items."""
+  def __init__(self, name, discription):
+    super(items,self).__init__(name, discription)
+  
+class equipable(items):
+  """The data for equipable items."""
+  Einstances = {}
+  def __init__(self, name, discription, armor, position, *effect):
+    super(equipable, self).__init__(name, discription)
+    self.armor = armor
+    self.position = position
+    self.effect = effect
+
+WOODEN_SHIELD = equipable("Wooden shield", "leel protection form boi", 2, "arm", None) #voorbeeld
+BERSERKERS_ARMOR = equipable("Berserker's armor", "The battle gear of a viking", 8, "chest","Berserk")  #voorbeeld
+
+class consumeable(items):
+  """The  data for consumeable items."""
+  def __init__(self, name, discription,  *effect):
+    super(consumeable, self).__init__(name, discription)
+    self.effect = effect
+    
+BANDAGE = consumeable("Bandage", "Helps to recover from light injury.", "Bandage" )
+
+class switchers:
+  early = {"Berserk": effects.BERSERK, "Bandage":effects.BANDAGE}
+  middle = {"No effect": effects.NO_EFFECT, "Dual hit": effects.DUAL_HIT, "Multi hit":effects.MULTI_HIT, "Draining":  effects.DRAINING, "Attack drop2": effects.ATTACK_DROP2,"Defence drop2": effects.DEFENCE_DROP2,"Attack boost2": effects.ATTACK_BOOST2,"Defence boost2": effects.DEFENCE_BOOST2, "Recover": effects.RECOVER}
+  late = {"Attack drop1": effects.ATTACK_DROP1,"Defence drop1": effects.DEFENCE_DROP1,"Attack boost1": effects.ATTACK_BOOST1,"Defence boost1": effects.DEFENCE_BOOST1}
+  item = {"Wooden shield": WOODEN_SHIELD, "Berserker's armor": BERSERKERS_ARMOR, "Bandage":BANDAGE}
+  @staticmethod
+  def get_obj(whatdict,name):
+    return whatdict[name]
+      
+class Menu:
+  """Menu's for the player."""
+  @staticmethod
+  def directionInput(*possibleDirections):
+    print("Directions you can go in:")
+    for x in possibleDirections:
+      print(x)
+    while True:
+      choice = input("Which direction do you want to go?")
+      if choice in possibleDirections:
+        return choice
+      else:
+        print("Invalid direction.")
+    
+  @staticmethod
+  def playerstate(user):
+    print("Health: %d out of %d."%(user.health,user.maxHealth))
+    print("Attack: %d."%user.attackPower)
+    print("Defence: %d."%user.defencePower)
+    print("Items equipped:")
+    for x in user.battlegear:
+      print(user.battlegear[x])
+      
+  @staticmethod
+  def Bmenu(user):
+    Menu.playerstate(user)
+    print("What do you want to do?")
+    choice = input("Options: Proceed, Manage items")
+    if choice != "Proceed":
+      while True:
+        print("Items in your bag:")
+        for x in user.instances:
+          print(x)
+        choice = input("What item do you want to use? (Type 'exit' to leave this menu)")
+        if choice == "exit":
+          break
+        else:
+          choice = switchers.get_obj(switchers.item,choice)
+          print("What do you wish to do with this item?")
+          action = input("Options: use, equip, unequip")
+          if action=="use" or action=="equip" or action=="unequip":
+            code = "user.%s(choice)"%action
+            exec(code)
+            break
+          else:
+            print("Invalid action.")
+
+  @staticmethod
+  def Smenu(user):
+    Menu.playerstate(user)
+    print("What do you want to do?")
+    choice = input("Options: Proceed, Manage items")
+    if choice != "Proceed":
+      while True:
+        print("Items in your bag:")
+        for x in user.instances:
+          print(x)
+        choice = input("What item do you want to use? (Type 'exit' to leave this menu)")
+        if choice == "exit":
+          break
+        else:
+          choice = switchers.get_obj(switchers.item,choice)
+          print("What do you wish to do with this item?")
+          action = input("Options: use, equip, unequip")
+          if action=="use" or action=="equip" or action=="unequip":
+            code = "user.%s(choice)"%action
+            exec(code)
+          else:
+            print("Invalid action.")
+        
+  @staticmethod  
+  def battle(guy,  NME):
+    print(" ")
+    print("The battle between %s and %s commences!"%(guy.name,NME.name))
+    while True:
+      for x in guy.actives:
+        switchers.get_obj(switchers.early,guy.actives[x])(guy, NME)
+      i = 0
+      while i==0:
+        Menu.Bmenu(guy)
+        print("Skills available to you:")
+        for x in guy.skills:
+          print(x)
+        move = input("Which skill do you want to use?")
+        for x in skills.instances:
+          if x.name == move:
+            guy.use_move(guy,x)
+            i = 1
+            break 
+      if NME.life==False:
+        print("%s has won the battle!"%guy.name)
+        break
+      move = random.choice(NME.skills)
+      for x in skills.instances:
+          if x.name == move:
+            NME.use_move(NME,x)
+            i = 1
+            break
+      if guy.life==False:
+        print("%s was slain in battle! You lost the game!"%guy.name)
+        sys.exit() #party.playStory(lastStory)~
+
+Wildfire= skills("Wildfire", 2, "A small fire that burns enemies.", "No effect")
+Splash = skills("Splash", 1.5, "A jet of water that damages enemies.", "No effect")
+Tremor = skills("Tremor", 2, "A small quake that makes enemies tremble.", "No effect")
+Gust = skills("Gust", 1.5, "A windy blast that blows enemies away.", "No effect")
+Flash = skills("Flash", 1.5, "A weak flash of light that hurts enemies.", "No effect")
+Astonish = skills("Astonish", 2, "A sudden movement that scares of enemies.", "No effect")
+Meme = skills("Meme", 2, "A dank meme that makes enemies angry.", "No effect")
+BoulderDrop = skills("Boulder Drop", 1, "Rocks used by the stone golem to attack the player.", "No effect")
+GoblinKnife = skills("GoblinKnife", 1, "The goblin's knife used to attack the player.", "Dual hit")
+Flames_of_Exile = skills("Flames of Exile", 1, "A magical flame used to attack the player.", "No effect")
+Hellwheel = skills("Hellwheel", 2.5, "A bright-red flaming wheel rolling over targets to burn them to crisps.", "No effect")
+Woodslam = skills("Woodslam", 2, "The user's entire body is covered in solid wood, and is slung towards the enemy.", "No effect")
+Airjet = skills("Airjet", 2, "A powerful wind that knocks down enemies.", "No effect")
+Roast = skills("Roast", 2.5, "An epic roast to pester enemies and make them angry.", "No effect")
+ThiefBash = skills("ThiefBash", 1, "A bash with a mace used by the thief to attack the player.", "No effect")
+Purify = skills("Purify", 2, "A healing current of water that purifies any toxins and regenerates the player.", "Recover")
+Healing = skills("Healing", 2, "A holy veil of light that envelops the player and heals any wounds.", "Recover")
+Lifedrain = skills("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.", "Draining")
+GreatswordSlash = skills("Greatsword Slash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.", "No effect") 
+ToxicFangs = skills("ToxicFangs", 1, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them", "Draining")
+Rest = skills("Rest", 2, "An creature's skill to sleep for a short time in order to recover some hp back", "Recover")
+Swarm = skills("Swarm", 2, "An attack in which a creature commands it's followers to attack the player", "No effect")
+TotemsFlashofLife = skills("Totem's Flash of Life", 1, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player", "No effect")
+Lavaflux = skills("Lavaflux", 3, "A wave of lava controlled by a magnetic flux that engulves the enemy", "No effect")
+Frostbite = skills("Frostbite", 2, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player", "Draining")
+Quicksand = skills("Quicksand", 2, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output", "No effect", "Attack drop1")
+Tornado = skills("Tornado", 2, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower", "No effect", "Attack drop1")
+Lightspear = skills("Lightspear", 2, "A spear made out of pure light that pierces enemies and purifies their soul from any sins", "No effect")
+Riftsplit = skills("Riftsplit", 2.5, "The player tears the enemy apart by beaming dark energy through their bodies", "Dual hit")
+Smokeweed = skills("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp", "Recover")
+ClawSmack = skills("ClawSmack", 1.25, "A giant claw is smacked onto the player to inflict damage", "No effect")
+Constrict = skills("Constrict", 1.5, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output", "No effect", "Attack drop1")
+DemigodWingAttack = skills("Demigod Wing Attack", 1.75, "The signature attack of all demigods, where they use their wings to strike the player", "Dual hit")
+Cut = skills("Cut", 1.25, "A standard move that uses a sharp object to cut something into pieces", "Dual hit")
+LeviathanHydroStorm = skills("Leviathan Hydro Storm", 2, "A huge storm of water, ice and lightning conjured by the Leviathan to test the player's worth", "No effect")
+Ignite = skills("Ignite", 2.5, "A long-lasting flame that wears down enemies and lowers their attack power", "No effect", "Attack drop1")
+Whirlpool = skills("Whirlpool", 2.5, "A maelstrom of water that traps foes and inflicts damage", "No effect")
+Gaiaslide = skills("Gaiaslide", 2.5, "A wave of land that engulves enemies and does damage", "No effect")
+Lightning = skills("Lightning", 2.5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage", "No effect")
+Deityblade = skills("Deityblade", 2.5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage", "Dual hit")
+Bloodlust = skills("Bloodlust", 2.5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp", "Draining") 
+Swagburn = skills("Swagburn,", 2.5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power", "No effect", "Attack drop1")
+Slash = skills("Slash", 1, "A non-attribute attack that involves slashing the enemy with sharp claws to deal damage", "No effect")
+CrystalJab = skills("Crystal Jab", 2, "Magical crystals are used to jab the foe to inflict damage and drain some hp with those crystals to recover some hp", "Draining")
+FoulMiasma = skills("Foul Miasma", 1.25, "A horrible poisonous breath that weakens the enemy's attack power", "No effect", "Attack drop1")
+EagleSkyCrash = skills("Eagle Sky Crash", 2, "The user soars into the sky, then drops to greatly increase their speed and strike the foe with massive force", "No effect")
+Combustion = skills("Combustion", 3, "A large explosion that heavily scorches enemies to the bone", "No effect")
+Drainage = skills("Drainage", 3, "The user absorbs nutrients from the water that restore some hp", "Recover")
+Stonetomb = skills("Stone tomb", 3, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them", "No effect", "Defence drop1")
+Vortex = skills("Vortex", 3, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power", "No effect", "Attack drop1")
+Blessing = skills("Blessing", 3, "Praying to the gods, the user gains their blessing and has some of their hp restored", "Recover")
+Darkeclipse = skills("Dark eclipse", 3, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage", "No effect")
+Memeoverdose = skills("Meme overdose", 3, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them", "No effect")
+Arrowfire = skills("Arrowfire", 1.25, "The user uses a bow and fires of a couple of arrows to pierce the target and inflict damage", "Dual hit")
+Brewing = skills("Brewing", 2.5, "The user uses their knowledge of alchemy to brew a potion and consume it to restore hp", "Recover")
 
 SecretP = False
 
@@ -425,7 +663,7 @@ print("Black Knight: 'Augh! I may have lost, but i will return, and when that da
 time.sleep(3)
 print(" ")
 print("%s: 'Okay, he's gone. Where do we need to head?'"%nick)
-time.sleep(3)
+time.sleep(1)
 print(" ")
 print("Old man: 'We need to pass through Elder Woods first, youngster .'")
 time.sleep(3)
