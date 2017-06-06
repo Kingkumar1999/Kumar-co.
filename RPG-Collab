@@ -1,350 +1,833 @@
+#fix using moves: name display and defence
+#add menu's outside battle in the story
+
 import time
 import sys
 import random
 import numpy as np
+import math
 
-class Player:
+class elements:
+  """This is the data for elements."""
+  def __init__(self, name, discription):
+    self.name = name
+    self.discription = discription
+  @staticmethod
+  def typeMatchup(user,target):
+    combo = "%s%s"%(user.element,target.element)
+    switcher = {
+      "FireEarth":2,
+      "FireDarkness":2,
+      "EarthAir":2,
+      "EarthLight":2,
+      "AirWater":2,
+      "WaterFire":2,
+      "LightDarkness":2,
+      "DarknessLight":2,
+      "DarkessFire":0.5,
+      "LightEarth":0.5,
+      "FireWater":0.5,
+      "WaterAir":0.5,
+      "AirEarth":0.5,
+      "EarthFire":0.5,
+      "SwagSwag":2,
+      "EarthCosmic":0.5,
+      "AirCosmic":0.5,
+      "CosmicEarth":2,
+      "CosmicAir":2,
+      "CosmicDarkness":0.5,
+      "DarknessCosmic":2,
+    }
+    return switcher.get(combo,1)
+    
+  def desc(self):
+    print(self.discription)
+    
+FIRE = elements("Fire","So you choose fire, you must be a fiery person then(no puns intended). You have a lot of firepower, but you can get angered quickly. Your class is: [ATTACK], skills are: [Wildfire]")
+WATER = elements("Water","So you choose water eh? You like to swim a lot, do you? You are a tender person that cares for others. Your class is: [SUPPORT], skills are: [Splash]")
+EARTH = elements("Earth","You choose earth, the best element jk. You are a strong and worthy person, and you can lift boulders and other stuff. Your class is: [DEFENSE], skills are: [Tremor]")    
+AIR = elements("Air","Air?! Is that even a natural element?! Of course it is! Remember: don't crash into mountains! Your class is: [DEFENSE], skills are: [Gust]")
+LIGHT = elements("Light","Your choice is light, a noble element with honour. We expect you to have such honour as well, otherwise the gods will punish you! Your class is: [SUPPORT], skills are: [Flash]")
+DARKNESS = elements("Darkness","You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]")
+SWAG = elements("Swag","Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]")
+COSMIC = elements("Cosmic", "A unknown and powerful element with divine power...")
+
+class effects(elements):
+  """The data for move/item effects."""
+  def __init__(self, name, discription):
+    super(effects,self).__init__(name, discription)
+  
+  @staticmethod
+  def NO_EFFECT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.25)
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    math.ceil(damageDone)
+    target.health -= damageDone
+    math.ceil(target.health)
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    if target.health<1:
+      target.life = False
+      
+  @staticmethod
+  def LIMIT_BREAK(move, user, target):
+    if LimitAchieve == True:
+      if user.limitcount >= 7:
+        user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] *0.25) * user.limitcount
+        damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)
+        math.ceil(damageDone)
+        target.health -= damageDone
+        math.ceil(target.health)
+        if elements.typeMatchup(user, target)==2:
+          print("The attack was super effective!")
+        elif elements.typeMatchup(user, target)==0.5:
+          print("The attack was not very effective...")
+        print("%s's health has been reduced to %d."%(target.name,target.health))
+        user.limitcount = user.limitcount - 7
+        if target.health<1:
+          target.life = False
+      else:
+        print(" ")
+        print("You cannot use a limit break yet!")
+    
+  @staticmethod
+  def DUAL_HIT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.25)
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    math.ceil(damageDone)
+    target.health -= damageDone
+    target.health -= damageDone
+    print("%s has been hit twice!"%target.name)
+    print(" ")
+    math.ceil(target.health)
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    if target.health<1:
+      target.life = False
+    
+  @staticmethod
+  def MULTI_HIT(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0]* 0.25)
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    math.ceil(damageDone)
+    multitimes = random.randint(2,5)
+    for a in range(2,multitimes): #this means 2 to 5 attacks, values can be tweaked
+      target.health -= damageDone
+      print("%s has been hit %s times!"%multitimes)
+    math.ceil(target.health)
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    if target.health<1:
+      target.life = False
+    
+  @staticmethod
+  def DRAINING(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0]* 0.25)
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    healingDone = 0.5 * damageDone
+    math.ceil(damageDone)
+    math.ceil(healingDone)
+    target.health -= damageDone
+    math.ceil(target.health)
+    user.health += healingDone
+    math.ceil(user.health)
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    if elements.typeMatchup(user, target)==2:
+      print("The attack was super effective!")
+    elif elements.typeMatchup(user, target)==0.5:
+      print("The attack was not very effective...")
+    print("%s's health has been reduced to %d."%(target.name,target.health))
+    if target.health<1:
+      target.life = False
+    
+  @staticmethod
+  def ATTACK_DROP1(move, user, target):
+    if target.stat_changes[0] > 1:
+      target.stat_changes[0]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's attack was dropped."%target.name)
+    else:
+      print("%s's attack is at its lowest!"%target.name)
+    
+  @staticmethod
+  def ATTACK_DROP2(move, user, target):
+    if target.stat_changes[0] > 2:
+      target.stat_changes[0]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's attack was heavily dropped."%target.name)
+    else:
+      effects.ATTACK_DROP1(move, user, target)
+    
+  @staticmethod
+  def ATTACK_BOOST1(move, user, target):
+    if target.stat_changes[0] < 9:
+      target.stat_changes[0] += 1 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's attack was boosted."%user.name)
+    else:
+      print("%s's attack is at its max!"%user.name)
+    
+  @staticmethod
+  def ATTACK_BOOST2(move, user, target):
+    if target.stat_changes[0] < 8:
+      target.stat_changes[0] += 2 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's attack was heavily boosted."%user.name)
+    else:
+      effects.ATTACK_BOOST1(move, user, target)
+    
+  @staticmethod
+  def DEFENCE_DROP1(move, user, target):
+    if target.stat_changes[1] > 1:
+      target.stat_changes[1]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's defence was dropped."%target.name)
+    else:
+      print("%s's defence is at its lowest!"%target.name)
+    
+  @staticmethod
+  def DEFENCE_DROP2(move, user, target):
+    if target.stat_changes[1] > 2:
+      target.stat_changes[1]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's defence was heavily dropped."%target.name)
+    else:
+      effects.ATTACK_DROP1(move, user, target)
+    
+  @staticmethod
+  def DEFENCE_BOOST1(move, user, target):
+    if target.stat_changes[1] < 9:
+      target.stat_changes[1] += 1 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's defence was boosted."%user.name)
+    else:
+      print("%s's defence is at its max!"%user.name)
+    
+  @staticmethod
+  def DEFENCE_BOOST2(move, user, target):
+    if target.stat_changes[1] < 8:
+      target.stat_changes[1] += 2 #This is simple I suppose, just copy this and change the name for other stats
+      print("%s's defence was heavily boosted."%user.name)
+    else:
+      effects.ATTACK_BOOST1(move, user, target) 
+    
+  @staticmethod
+  def RECOVER(move, user, target):
+    if user.disable == False:
+      healingDone = move.power * user.aura #self.power is hierbij de hoeveelheid hp die je krijgt.
+      math.ceil(healingDone)
+      user.health += healingDone
+      if user.health>user.maxHealth: #overflow check
+        user.health=user.maxHealth
+      print("%s's health has been increased to %d."%(user.name,user.health))
+    elif user.disable == True:
+      print(" ")
+      print("%s cannot use healing moves!"%user.name)
+    
+  @staticmethod
+  def POISON(move, user, target):
+    if target.state == False:
+      poisonchance = random.random()
+      if poisonchance >= 0.7:
+        target.state == True
+        print(" ")
+        print("%s has been poisoned!"%target.name)
+        poisonPower = move.power * user.aura * user.attackPower * 0.125
+        math.ceil(poisonPower)
+        target.health -= poisonPower
+        math.ceil(target.health)
+        print("%s's health has been reduced to %d."%(target.name,target.health))
+        if target.health<1:
+          target.life = False
+    elif target.state == True:
+      print(" ")
+      print("%s already has a bad state!"%target.name)
+  
+  @staticmethod
+  def BURNED(move, user, target):
+    if target.state == False:
+      burnchance = random.random()
+      if burnchance >= 0.7:
+        target.state == True
+        print(" ")
+        print("%s has been burned!"%target.name)
+        burnPower = move.power * user.aura * user.attackPower * 0.125
+        math.ceil(burnPower)
+        target.health -= burnPower
+        math.ceil(target.health)
+        print("%s's health has been reduced to %d."%(target.name,target.health))
+        if target.health<1:
+          target.life = False
+    elif target.state == True:
+      print(" ")
+      print("%s already has a bad state!"%target.name)
+    
+  @staticmethod
+  def CHARGE(move, user, target):
+    if twoturncharge == 0:
+      print(" ")
+      print("%s is charging an attack!"%user.name)
+      twoturncharge = twoturncharge + 1
+    elif twoturncharge == 1:
+      print(" ")
+      print("%s unleashed the a powerful charged attack!"%user.name)
+      user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.25)
+      damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+      math.ceil(damageDone)
+      target.health -= damageDone
+      math.ceil(target.health)
+      if elements.typeMatchup(user, target)==2:
+        print("The attack was super effective!")
+      elif elements.typeMatchup(user, target)==0.5:
+        print("The attack was not very effective...")
+      print("%s's health has been reduced to %d."%(target.name,target.health))
+      twoturncharge = 0
+      if target.health<1:
+        target.life = False
+    
+  @staticmethod
+  def DISABLE(move, user, target):
+    if target.disable == False:
+      target.restrain == True
+      print(" ")
+      print("%s's healing moves have been restrained!"%target.name)
+    elif target.disable == True:
+      print(" ")
+      print("%s's healing are already restrained!"%target.name)
+    
+  @staticmethod
+  def BERSERK(move, user, target):
+    if user.health<(user.maxHealth/2):
+      print(" ")
+      print("%s went berserk!"%user.name)
+      time.sleep(3)
+      print(" ")
+      effects.ATTACK_BOOST2(move, user, target)
+      
+  @staticmethod
+  def VEIL(move, user, target):
+    if elements.typeMatchup(target, user)==2:
+      damageDone = damageDone * 0.75
+      print(" ")
+      print("Supereffective damage on %s was reduced!"%user.name)
+      
+  @staticmethod
+  def BANDAGE(move, user, target):  
+    print("%s used a bandage."%user.name)
+    user.health += 5
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    print("%s's health has been increased to %d."%(user.name,user.health))
+    
+  @staticmethod
+  def MAGICDROP(move, user, target):  
+    print("%s used a magical drop."%user.name)
+    user.health = user.maxHealth
+    print("%s has been fully healed."%user.name)
+  
+class inventory:
+  """The team's inventory"""
+  instances = []
+  def __init__(self, name):
+    self.name = name
+    
+  def check_has(self,item):
+    return bool(item.name in self.instances)
+        
+  def add_item(self, item, amount):
+    for x in range(0,amount):
+      if len(self.instances)>20: 
+        if x==0:
+          print("The inventory is full.")
+        break
+      else:
+        if self.check_has(item):
+          self.instances[item.name] += 1
+        else:
+          self.instances.append({item.name:1})
+    print("You now have %d %s's."%(self.instances[item.name],item.name))
+            
+  def remove_item(self, item, amount):
+    for x in range(0,amount):
+      if self.check_has(item):
+        self.instances[item.name] -= 1
+        if self.instances[item.name] == 0:
+          del self.instances[item.name]
+          break
+      else:
+        if x == 0:
+          print("You don't have this item!")  
+        break  
+    print("You now have %d %s's."%(self.instances[item.name],item.name))
+
+class Character:
   """The data for the players."""
-  def __init__(self, name, hp, atk):
+  def __init__(self, name, hp, atk, defen, *difficulty):
         self.name = name
         self.health = hp
         self.maxHealth = hp
         self.attackPower = atk
+        self.defencePower = defen
         self.life = True
-        self.attackDamage = 0
         self.skills= []
-        self.aura=1
-        self.types= "Normal"
+        self.aura=1 #justCesarThings
+        self.element= "Normal"
+        self.stat_changes = [5,5] #First one is attack, second is defence
+        self.limitcount = 0 #Dit is de limit count die je charges voor limit breaks bijhoudt.
+        self.state = False
+        self.disable = False
   def use_move(self, target, move):
         move.applyMove(self,target)
   def add_move(self, move):
         self.skills.append(move)
         print("%s has learned %s!"%(self.name,move))
-        for x in skills.instances:
-          if x.name == move:
-            print(x.discription)
-            break
-        time.sleep(3)
-        print(" ")
+        switchers.get_obj(switchers.moves, move).desc
   def powerUp(self, newAura):
         self.aura = newAura
   def add_type(self,Element):
-        self.types = Element
+        self.element = Element
         print("%s is a %s type!"%(self.name,Element))
 
-class skills:
+class party(Character,inventory):
+  """The data for party members."""
+  def __init__(self, *args):
+    super(party,self).__init__(*args)
+    self.battlegear = {}
+    self.actives = {}
+    
+  def use(self, item):
+    if isinstance(item,consumeable) == False:
+      print("You can't do that with this item!")
+      return None
+    if self.check_has(item):
+      print("%s used a %s."%(self.name, item.name))
+      self.instances[item.name] -= 1
+      for x in item.effect:
+        switchers.early[x](None, self, self)
+    else:
+      print("You do not have this item!")
+    
+  def equip(self,item):
+    if isinstance(item,equipable) == False:
+      print("You can't do that with this item!")
+      return None
+    if self.check_has(item):
+      if item.position in self.battlegear:
+        print("You're already wearing an item in this position!")
+      else:
+        self.battlegear[item.position] = item.name
+        self.actives[item.name] = item.effect
+        self.defencePower += item.armor
+        print("You equipped the %s."%item.name)
+    else:
+      print("You do not have this item!")
+    
+  def unequip(self,item):
+    if isinstance(item,equipable) == False:
+      print("You can't do that with this item!")
+      return None
+    if item.position in self.battlegear:
+      self.defencePower -= item.armor
+      del self.battlegear[item.position]
+      del self.actives[item.name]
+      print("You have unequipped %s."%item.name)
+    else:
+      print("You're not wearing a %s."%item.name)
+      
+class enemy(Character):
+  """The data for enemies."""
+  def __init__(self, name, hp, atk, defen,*loot):
+    super(enemy,self).__init__(name, hp, atk, defen)
+    self.loot = loot
+  def droploot(self, target):
+    for x in self.loot:
+      print("%s dropped %s"%(self.name,x))
+      target.add_item(x,1)
+
+class skills(effects):
   """The general data for the skills."""
   instances = []
-  def __init__(self, name, power, discription):
+  def __init__(self, name, power, discription, *effect):
     self.name = name
     self.power = power
     self.discription = discription
-    self.__class__.instances.append(self)
+    self.__class__.instances.append(self.name)
+    self.effect = effect
   def desc(self):
     print(self.discription)
-
-class damaging(skills):
-  """The  data for damaging skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, dealing damage!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print(" ")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    if target.health < 1:
-      target.life = False
-    
-class healing(skills):
-  """The  data for healing skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, recovering some hp!"%(user.name,self.name))
-    user.attackDamage = self.power * user.aura
-    target.health += user.attackDamage
-    print("%s's health has been increased to %d."%(target.name,target.health))
-    
-class draining(skills):
-  """The  data for draining skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, draining some health!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= user.attackDamage
-    user.health += 0.5 * damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d and %s's health was increased to %d"%(target.name, target.health, user.name, user.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-      
-class defending(skills):
-  """The data for defending skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, reducing enemy attack power!"%(user.name,self.name))
-    print(" ")
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = user.attackDamage * typeMatchup(user.types,target.types)
-    target.health -= damageDone
-    target.attackPower = target.attackPower * 0.75
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-
-class dualhit(skills):
-  """The data for dual hitting skills."""
-  def applyMove(self, user, target):
-    print("%s used %s, hitting twice!"%(user.name,self.name))
-    print(" ")
-    chance = np.random.uniform(0.2, 0.6)
-    user.attackDamage = self.power * user.attackPower * user.aura
-    damageDone = (chance * user.attackDamage * typeMatchup(user.types,target.types)) + (chance * user.attackDamage * typeMatchup(user.types,target.types))
-    target.health -= damageDone
-    if typeMatchup(user.types,target.types)==2:
-      print("The attack was super effective!")
-    elif typeMatchup(user.types,target.types)==0.5:
-      print("The attack was not very effective...")
-    print("%s's health has been reduced to %d."%(target.name,target.health))
-    print(" ")
-    if target.health < 1:
-      target.life = False
-      
-def battle(guy,  NME):
-  print(" ")
-  print("The battle between %s and %s commences!"%(guy.name,NME.name))
-  while True:
-    i = 0
-    while i==0:
-      print("Skills available to you:")
-      for x in guy.skills:
-        print(x)
-      move = input("Which skill do you want to use?")
-      for x in skills.instances:
-        if x.name == move and x.name in guy.skills:
-          if isinstance(x, healing):
-            guy.use_move(guy,x)
-          else:
-            guy.use_move(NME,x)
-          i = 1
-          break 
-    if NME.life==False:
-      print("%s has won the battle!"%guy.name)
-      print("You defeated the %s! You found a potion! All hp restored!"%NME.name)
-      P1.health = P1.maxHealth
-      break
-    move = random.choice(NME.skills)
-    for x in skills.instances:
-        if x.name == move:
-          if isinstance(x, healing):
-            NME.use_move(NME,x)
-          else:
-            NME.use_move(guy,x)
-          i = 1
-          break
-    if guy.life==False:
-      print("%s was slain in battle! You lost the game!"%guy.name)
-      sys.exit()      
-
-Wildfire= damaging("Wildfire", 2, "A small fire that burns enemies.")
-Splash = damaging("Splash", 1.5, "A jet of water that damages enemies.")
-Tremor = damaging("Tremor", 2, "A small quake that makes enemies tremble.")
-Gust = damaging("Gust", 1.5, "A windy blast that blows enemies away.")
-Flash = damaging("Flash", 1.5, "A weak flash of light that hurts enemies.")
-Astonish = damaging("Astonish", 2, "A sudden movement that scares of enemies.")
-Meme = damaging("Meme", 2, "A dank meme that makes enemies angry.")
-BoulderDrop = damaging("Boulder Drop", 1, "Rocks used by the stone golem to attack the player.")
-GoblinKnife = dualhit("GoblinKnife", 1, "The goblin's knife used to attack the player.")
-Flames_of_Exile = damaging("Flames of Exile", 1, "A magical flame used to attack the player.")
-Hellwheel = damaging("Hellwheel", 2.5, "A bright-red flaming wheel rolling over targets to burn them to crisps.")
-Woodslam = damaging("Woodslam", 2, "The user's entire body is covered in solid wood, and is slung towards the enemy.")
-Airjet = damaging("Airjet", 2, "A powerful wind that knocks down enemies.")
-Roast = damaging("Roast", 2.5, "An epic roast to pester enemies and make them angry.")
-ThiefBash = dualhit("ThiefBash", 1, "A bash with a mace used by the thief to attack the player.")
-Purify = healing("Purify", 2, "A healing current of water that purifies any toxins and regenerates the player.")
-Healing = healing("Healing", 2, "A holy veil of light that envelops the player and heals any wounds.")
-Lifedrain = draining("Lifedrain", 2, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.")
-GreatswordSlash = damaging("Greatsword Slash", 1.5, "A slash with a big sword used by The Black Knight to attack the player.") 
-ToxicFangs = draining("ToxicFangs", 1, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them")
-Rest = healing("Rest", 2, "An creature's skill to sleep for a short time in order to recover some hp back")
-Swarm = damaging("Swarm", 2, "An attack in which a creature commands it's followers to attack the player")
-TotemsFlashofLife = damaging("Totem's Flash of Life", 1, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player")
-Lavaflux = damaging("Lavaflux", 3, "A wave of lava controlled by a magnetic flux that engulves the enemy")
-Frostbite = draining("Frostbite", 2, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player")
-Quicksand = defending("Quicksand", 2, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output")
-Tornado = defending("Tornado", 2, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower")
-Lightspear = damaging("Lightspear", 2, "A spear made out of pure light that pierces enemies and purifies their soul from any sins")
-Riftsplit = dualhit("Riftsplit", 2.5, "The player tears the enemy apart by beaming dark energy through their bodies")
-Smokeweed = healing("Smokeweed", 2, "The player lights up some weed to smoke, and recovers some hp")
-ClawSmack = damaging("ClawSmack", 1.25, "A giant claw is smacked onto the player to inflict damage")
-Constrict = defending("Constrict", 1.5, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output")
-DemigodWingAttack = dualhit("Demigod Wing Attack", 1.75, "The signature attack of all demigods, where they use their wings to strike the player")
-Cut = dualhit("Cut", 1.25, "A standard move that uses a sharp object to cut something into pieces")
-LeviathanHydroStorm = damaging("Leviathan Hydro Storm", 2, "A huge storm of water, ice and lightning conjured by the Leviathan to test the player's worth")
-Ignite = defending("Ignite", 2.5, "A long-lasting flame that wears down enemies and lowers their attack power")
-Whirlpool = damaging("Whirlpool", 2.5, "A maelstrom of water that traps foes and inflicts damage")
-Gaiaslide = damaging("Gaiaslide", 2.5, "A wave of land that engulves enemies and does damage")
-Lightning = damaging("Lightning", 2.5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage")
-Deityblade = dualhit("Deityblade", 2.5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage")
-Bloodlust = draining("Bloodlust", 2.5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp") 
-Swagburn = defending("Swagburn,", 2.5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power")
-Slash = damaging("Slash", 1, "A non-attribute attack that involves slashing the enemy with sharp claws to deal damage")
-CrystalJab = draining("Crystal Jab", 2, "Magical crystals are used to jab the foe to inflict damage and drain some hp with those crystals to recover some hp")
-FoulMiasma = defending("Foul Miasma", 1.25, "A horrible poisonous breath that weakens the enemy's attack power")
-EagleSkyCrash = damaging("Eagle Sky Crash", 2, "The user soars into the sky, then drops to greatly increase their speed and strike the foe with massive force")
-Combustion = damaging("Combustion", 3, "A large explosion that heavily scorches enemies to the bone")
-Drainage = healing("Drainage", 3, "The user absorbs nutrients from the water that restore some hp")
-Stonetomb = defending("Stone tomb", 3, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them")
-Vortex = defending("Vortex", 3, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power")
-Blessing = healing("Blessing", 3, "Praying to the gods, the user gains their blessing and has some of their hp restored")
-Darkeclipse = damaging("Dark eclipse", 3, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage")
-Memeoverdose = damaging("Meme overdose", 3, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them")
-Arrowfire = dualhit("Arrowfire", 1.25, "The user uses a bow and fires of a couple of arrows to pierce the target and inflict damage")
-Brewing = healing("Brewing", 2.5, "The user uses their knowledge of alchemy to brew a potion and consume it to restore hp")
-        
-def elementTxt(t):
-  switcher = {
-    'Fire': "So you choose fire, you must be a fiery person then(no puns intended). You have a lot of firepower, but you can get angered quickly. Your class is: [ATTACK], skills are: [Wildfire]",
-    'Water': "So you choose water eh? You like to swim a lot, do you? You are a tender person that cares for others. Your class is: [SUPPORT], skills are: [Splash]",
-    'Earth': "You choose earth, the best element jk. You are a strong and worthy person, and you can lift boulders and other stuff. Your class is: [DEFENSE], skills are: [Tremor]",
-    'Air': "Air?! Is that even a natural element?! Of course it is! Remember: don't crash into mountains! Your class is: [DEFENSE], skills are: [Gust]",
-    'Light': "Your choice is light, a noble element with honour. We expect you to have such honour as well, otherwise the gods will punish you! Your class is: [SUPPORT], skills are: [Flash]",
-    'Darkness': "You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]",
-    'Swag': "Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]",
-  }
-  return switcher.get(t)
   
-def typeMatchup(type1,type2):
-  combo = "%s%s"%(type1,type2)
-  switcher = {
-    "FireEarth":2,
-    "EarthAir":2,
-    "AirWater":2,
-    "WaterFire":2,
-    "LightDarkness":2,
-    "DarknessLight":2,
-    "FireWater":0.5,
-    "WaterAir":0.5,
-    "AirEarth":0.5,
-    "EarthFire":0.5,
-    "SwagSwag":2,
-  }
-  return switcher.get(combo,1)
+  def applyMove(self, user, target):
+    print("%s used %s!"%(user.name,self.name))
+    for x in self.effect:
+      if x in switchers.early:
+        switchers.early[x](self, user, target)
+    for x in self.effect:
+      if x in switchers.middle:
+        switchers.middle[x](self, user, target)
+    for x in self.effect:
+      if x in switchers.late:
+        switchers.late[x](self, user, target)
+    
+class items(effects):
+  """The general data for the items."""
+  def __init__(self, name, discription):
+    super(items,self).__init__(name, discription)
+  
+class equipable(items):
+  """The data for equipable items."""
+  Einstances = {}
+  def __init__(self, name, discription, armor, position, *effect):
+    super(equipable, self).__init__(name, discription)
+    self.armor = armor
+    self.position = position
+    self.effect = effect
+
+WOODEN_SHIELD = equipable("Wooden shield", "A basic shield made out of oak wood", 2, "arm", None)
+BERSERKERS_ARMOR = equipable("Berserker's armor", "The battle gear of a viking", 8, "chest","Berserk")
+ANCIENT_CROWN = equipable("Ancient crown", "A magical and ancient crown once worn by the pharao's", 4, "head", "Veil")
+
+
+class consumeable(items):
+  """The  data for consumeable items."""
+  def __init__(self, name, discription,  *effect):
+    super(consumeable, self).__init__(name, discription)
+    self.effect = effect
+    
+BANDAGE = consumeable("Bandage", "Helps to recover from light injury.", "Bandage" )
+MAGICDROP = consumeable("Magic drop", "Magically heals all wounds.", "Magic drop")
+      
+class Menu:
+  """Menu's for the player."""
+  @staticmethod
+  def validInput(*forbiddenInputs):
+    while True:
+      choice = input("What is your choice?")
+      if choice in forbiddenInputs or len(choice)==0:
+        print("Invalid direction.")
+      else:
+        return choice
+        
+  
+  @staticmethod
+  def directionInput(*possibleDirections):
+    print("Directions you can go in:")
+    for x in possibleDirections:
+      print(x)
+    while True:
+      choice = input("Which direction do you want to go?")
+      if choice in possibleDirections:
+        print("You went %s"%choice)
+        return choice
+      else:
+        print("Invalid direction.")
+  
+  @staticmethod
+  def choiceInput(*possibleChoices):
+    print("Your choices:")
+    for x in possibleChoices:
+      print(x)
+    while True:
+      choice = input("What is your choice?")
+      if choice in possibleChoices:
+        print("Your answer is %s"%choice)
+        return choice
+      else:
+        print("Invalid choice.")
+    
+  @staticmethod
+  def playerstate(user):
+    print("Health: %d out of %d."%(user.health,user.maxHealth))
+    print("Attack: %d."%user.attackPower)
+    print("Defence: %d."%user.defencePower)
+    print("Items equipped:")
+    for x in user.battlegear:
+      print(user.battlegear[x])
+      
+  @staticmethod
+  def Bmenu(user):
+    Menu.playerstate(user)
+    print("What do you want to do?")
+    choice = input("Options: Proceed, Items (Any key to Proceed.)")
+    if choice == "Items":
+      while True:
+        print("Items in your bag:")
+        for x in user.instances:
+          print(x)
+        choice = input("What item do you want to use? (Type 'exit' to leave this menu)")
+        if choice == "exit":
+          break
+        else:
+          if choice in switchers.item:
+            choice = switchers.get_obj(switchers.item,choice)
+            print("What do you wish to do with this item?")
+            action = input("Options: use, equip, unequip")
+            if action=="use" or action=="equip" or action=="unequip":
+              code = "user.%s(choice)"%action
+              exec(code)
+              break
+            else:
+              print("Invalid action.")
+          else:
+            print("This is not an item.")
+
+  @staticmethod
+  def Smenu(user):
+    Menu.playerstate(user)
+    print("What do you want to do?")
+    choice = input("Options: Proceed, Manage items")
+    if choice != "Proceed":
+      while True:
+        print("Items in your bag:")
+        for x in user.instances:
+          print(x)
+        choice = input("What item do you want to use? (Type 'exit' to leave this menu)")
+        if choice == "exit":
+          break
+        else:
+          choice = switchers.get_obj(switchers.item,choice)
+          print("What do you wish to do with this item?")
+          action = input("Options: use, equip, unequip")
+          if action=="use" or action=="equip" or action=="unequip":
+            code = "user.%s(choice)"%action
+            exec(code)
+          else:
+            print("Invalid action.")
+        
+  @staticmethod  
+  def battle(guy,  NME):
+    print(" ")
+    print("The battle between %s and %s commences!"%(guy.name,NME.name))
+    while True:
+      for x in guy.actives:
+        switchers.get_obj(switchers.early,guy.actives[x])(guy, NME)
+      i = 0
+      while i==0:
+        Menu.Bmenu(guy)
+        print("Skills available to you:")
+        for x in guy.skills:
+          print(x)
+        move = input("Which skill do you want to use?")
+        for x in skills.instances:
+          if x == move:
+            guy.use_move(NME,switchers.get_obj(switchers.moves, x))
+            i = 1
+            break 
+      if NME.life==False:
+        print("%s has won the battle!"%guy.name)
+        guy.stat_changes = [5,5]
+        guy.state == False
+        guy.disable = False
+        break
+      move = random.choice(NME.skills)
+      for x in skills.instances:
+          if x == move:
+            NME.use_move(guy,switchers.get_obj(switchers.moves, x))
+            break
+      if guy.life==False:
+        print("%s was slain in battle! You lost the game!"%guy.name)
+        sys.exit() #party.playStory(lastStory)~
+      if LimitAchieve == True:
+        time.sleep(2)
+        guy.limitcount = guy.limitcount + 1
+        print(" ")
+        print("%s/7 charges."%guy.limitCount)
+
+Wildfire= skills("Wildfire", 4, "A small fire that burns enemies.", "No effect")
+Splash = skills("Splash", 3, "A jet of water that damages enemies.", "No effect")
+Tremor = skills("Tremor", 4, "A small quake that makes enemies tremble.", "No effect")
+Gust = skills("Gust", 3, "A windy blast that blows enemies away.", "No effect")
+Flash = skills("Flash", 3, "A weak flash of light that hurts enemies.", "No effect")
+Astonish = skills("Astonish", 4, "A sudden movement that scares of enemies.", "No effect")
+Meme = skills("Meme", 4, "A dank meme that makes enemies angry.", "No effect")
+BoulderDrop = skills("Boulder Drop", 2, "Rocks used by the stone golem to attack the player.", "No effect")
+GoblinKnife = skills("GoblinKnife", 2, "The goblin's knife used to attack the player.", "Dual hit")
+Flames_of_Exile = skills("Flames of Exile", 2, "A magical flame used to attack the player.", "No effect")
+Hellwheel = skills("Hellwheel", 5, "A bright-red flaming wheel rolling over targets to burn them to crisps.", "No effect", "Burned")
+Woodslam = skills("Woodslam", 4, "The user's entire body is covered in solid wood, and is slung towards the enemy.", "No effect", "Defence boost1")
+Airjet = skills("Airjet", 4, "A powerful wind that knocks down enemies.", "No effect")
+Roast = skills("Roast", 5, "An epic roast to pester enemies and make them angry.", "No effect")
+ThiefBash = skills("Thief Bash", 2, "A bash with a mace used by the thief to attack the player.", "No effect")
+Purify = skills("Purify", 4, "A healing current of water that purifies any toxins and regenerates the player.", "Recover")
+Healing = skills("Healing", 4, "A holy veil of light that envelops the player and heals any wounds.", "Recover")
+Lifedrain = skills("Lifedrain", 4, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.", "Draining")
+GreatswordSlash = skills("Greatsword Slash", 3, "A slash with a big sword used by The Black Knight to attack the player.", "No effect", "Attack boost1") 
+ToxicFangs = skills("Toxic Fangs", 2, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them", "Draining", "Poison")
+Rest = skills("Rest", 4, "An creature's skill to sleep for a short time in order to recover some hp back", "Recover")
+Swarm = skills("Swarm", 4, "An attack in which a creature commands it's followers to attack the player", "No effect")
+TotemsFlashofLife = skills("Totem's Flash of Life", 2, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player", "No effect")
+AuraDance = skills("Aura dance", 0, "The player performs a mystical and ancient dance that boosts their attack", "Attack boost1")
+AuraShield = skills("Aura shield", 0, "The player uses their aura to boost their defence", "Defence boost1")
+Lavaflux = skills("Lavaflux", 5, "A wave of lava controlled by a magnetic flux that engulves the enemy", "No effect")
+Frostbite = skills("Frostbite", 4, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player", "Draining")
+Quicksand = skills("Quicksand", 4, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output", "No effect", "Attack drop1")
+Tornado = skills("Tornado", 4, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower", "No effect", "Attack drop1")
+Lightspear = skills("Lightspear", 4, "A spear made out of pure light that pierces enemies and purifies their soul from any sins", "No effect", "Disable")
+Riftsplit = skills("Riftsplit", 5, "The player tears the enemy apart by beaming dark energy through their bodies", "Dual hit")
+Smokeweed = skills("Smokeweed", 4, "The player lights up some weed to smoke, and recovers some hp", "Recover")
+ClawSmack = skills("ClawSmack", 2.5, "A giant claw is smacked onto the player to inflict damage", "No effect")
+Constrict = skills("Constrict", 3, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output", "No effect", "Attack drop1")
+DemigodWingAttack = skills("Demigod Wing Attack", 3.5, "The signature attack of all demigods, where they use their wings to strike the player", "Dual hit")
+Cut = skills("Cut", 2.5, "A standard move that uses a sharp object to cut something into pieces", "Dual hit")
+LeviathanHydroStorm = skills("Leviathan Hydro Storm", 4, "A huge storm of water, ice and lightning conjured by the Leviathan to test the player's worth", "No effect")
+Ignite = skills("Ignite", 5, "A long-lasting flame that wears down enemies and lowers their attack power", "No effect", "Attack drop1")
+Whirlpool = skills("Whirlpool", 5, "A maelstrom of water that traps foes and inflicts damage", "No effect", "Defence drop1")
+Gaiaslide = skills("Gaiaslide", 5, "A wave of land that engulves enemies and does damage", "No effect")
+Lightning = skills("Lightning", 5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage", "No effect", "Burned")
+Deityblade = skills("Deityblade", 5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage", "Dual hit", "Disable")
+Bloodlust = skills("Bloodlust", 5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp", "Draining") 
+Swagburn = skills("Swagburn,", 5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power", "No effect", "Attack drop1")
+Slash = skills("Slash", 2, "A non-attribute attack that involves slashing the enemy with sharp claws to deal damage", "No effect")
+CrystalJab = skills("Crystal Jab", 4, "Magical crystals are used to jab the foe to inflict damage and drain some hp with those crystals to recover some hp", "Draining")
+FoulMiasma = skills("Foul Miasma", 2.5, "A horrible poisonous breath that weakens the enemy's attack power", "No effect", "Attack drop1", "Poison")
+EagleSkyCrash = skills("Eagle Sky Crash", 4, "The user soars into the sky, then drops to greatly increase their speed and strike the foe with massive force", "No effect", "Charge")
+Combustion = skills("Combustion", 6, "A large explosion that heavily scorches enemies to the bone", "No effect")
+Drainage = skills("Drainage", 6, "The user absorbs nutrients from the water that restore some hp", "Recover")
+Stonetomb = skills("Stone tomb", 6, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them", "No effect", "Defence drop1")
+Vortex = skills("Vortex", 6, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power", "No effect", "Attack drop1")
+Blessing = skills("Blessing", 6, "Praying to the gods, the user gains their blessing and has some of their hp restored", "Recover")
+Darkeclipse = skills("Dark eclipse", 6, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage", "No effect")
+Memeoverdose = skills("Meme overdose", 6, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them", "No effect")
+Arrowfire = skills("Arrowfire", 2.5, "The user uses a bow and fires of a couple of arrows to pierce the target and inflict damage", "Dual hit")
+Brewing = skills("Brewing", 5, "The user uses their knowledge of alchemy to brew a potion and consume it to restore hp", "Recover")
+MonolithBeam = skills("Monolith Beam", 3, "A powerful elemental beam mainly used by elementals", "Charge")
+InfernoMeteor = skills("Inferno meteor", 10, "Using a limit break, the user summons a shower of flaming meteors from the sky to bombard enemies", "Limit break", "Burned")
+OceanTempest = skills("Ocean tempest", 10, "Using a limit break, the player uses an ancient strength to create a massive storm of water and lightning that washes away enemies", "Limit break", "Disable")
+VolcanicCore = skills("Volcanic core", 10, "Using a limit break, the user uses the power of the very earth itself and engulves the enemy in a eruption of magma and molten metals", "Limit break", "Attack drop2")
+ThunderSky = skills("Thunder sky", 10, "Using a limit break, the user summons thunder and lightning, and heats up the air so much that it melts even steel", "Limit break", "Burned")
+Genesis = skills("Genesis", 10, "Using a limit break, the user calls upon the heavens, and uses a massive weapon of light to wipe out enemies", "Limit break", "Disable")
+BlackHole = skills("Black hole", 10, "Using a limit break, the user throws the enemy into a black hole that rips even space and time", "Limit break", "Defence drop2")
+Threesixty =skills("360 noscope", 10, "Using a limit break, the user pulls out a bow, turns 360 degrees and hits the enemy in the head", "Limit break", "Attack drop2")
+Crunch = skills("Crunch", 4, "An attack with big jaws to bite and hurt the player", "Limit break")
+CosmicFury = skills("Cosmic Fury", 5, "Using the Cosmic Blade, the user attacks the target using series of slashes, and drains some hp thanks to the Blade's mystical power.", "Draining", "Multi hit")
+
+class switchers:
+  early = {"Berserk": effects.BERSERK, "Bandage":effects.BANDAGE}
+  middle = {"No effect": effects.NO_EFFECT, "Dual hit": effects.DUAL_HIT, "Multi hit":effects.MULTI_HIT, "Draining":  effects.DRAINING, "Attack drop2": effects.ATTACK_DROP2,"Defence drop2": effects.DEFENCE_DROP2,"Attack boost2": effects.ATTACK_BOOST2,"Defence boost2": effects.DEFENCE_BOOST2, "Recover": effects.RECOVER, "Poison": effects.POISON, "Burned":effects.BURNED, "Disable":effects.DISABLE, "Charge":effects.CHARGE, "Veil":effects.VEIL}
+  late = {"Attack drop1": effects.ATTACK_DROP1,"Defence drop1": effects.DEFENCE_DROP1,"Attack boost1": effects.ATTACK_BOOST1,"Defence boost1": effects.DEFENCE_BOOST1}
+  item = {"Wooden shield": WOODEN_SHIELD, "Berserker's armor": BERSERKERS_ARMOR, "Bandage":BANDAGE, "Magic drop": MAGICDROP, "Ancient crown": ANCIENT_CROWN}
+  types = {'Fire': FIRE,'Water': WATER,'Earth': EARTH,'Air':AIR,'Light':LIGHT,'Darkness':DARKNESS,'Swag':SWAG, 'Cosmic':COSMIC}
+  moves = {"Wildfire": Wildfire, "Splash": Splash, "Tremor": Tremor, "Gust": Gust, "Flash":Flash, "Astonish": Astonish, "Meme":Meme, "Boulder Drop":BoulderDrop, "GoblinKnife": GoblinKnife, "Flames of Exile":Flames_of_Exile, "Hellwheel": Hellwheel, "Woodslam": Woodslam, "Airjet": Airjet, "Roast": Roast, "Thief Bash":ThiefBash, "Purify":Purify, "Healing": Healing, "Lifedrain": Lifedrain, "Aura dance": AuraDance, "Aura shield": AuraShield, "Greatsword Slash": GreatswordSlash, "ToxicFangs": ToxicFangs, "Rest": Rest, "Swarm":Swarm, "Totem's Flash of Life":TotemsFlashofLife, "Lavaflux": Lavaflux, "Frostbite": Frostbite, "Quicksand":Quicksand, "Tornado":Tornado, "Lightspear":Lightspear, "Riftsplit": Riftsplit, "Smokeweed": Smokeweed, "ClawSmack": ClawSmack, "Constrict": Constrict, "Demigod Wing Attack": DemigodWingAttack, "Cut":Cut, "Leviathan Hydro Storm": LeviathanHydroStorm, "Ignite": Ignite, "Whirlpool": Whirlpool, "Gaiaslide":Gaiaslide, "Lightning": Lightning, "Deityblade":Deityblade, "Bloodlust": Bloodlust, "Swagburn":Swagburn, "Slash":Slash, "Crystal Jab": CrystalJab, "Foul Miasma": FoulMiasma, "Eagle Sky Crash": EagleSkyCrash, "Combustion": Combustion, "Drainage": Drainage, "Stone tomb":Stonetomb, "Vortex":Vortex, "Blessing": Blessing, "Dark eclipse": Darkeclipse, "Meme overdose": Memeoverdose, "Arrowfire": Arrowfire, "Brewing":Brewing, "Monolith Beam": MonolithBeam, "Inferno meteor": InfernoMeteor, "Ocean tempest":OceanTempest, "Volcanic core":VolcanicCore, "Thunder sky":ThunderSky, "Genesis":Genesis, "Black hole": BlackHole, "Three sixty":Threesixty, "Crunch":Crunch, "Cosmic fury":CosmicFury}
+
+  @staticmethod
+  def get_obj(whatdict,name):
+    return whatdict[name]
 
 SecretP = False
-
-directions = ["Left", "Right", "Straight", "l", "s", "r"]
-directions2 = ["Left","Right", "l", "r"]
-types = ['Fire','Water','Earth','Air','Light','Darkness','Swag']
-directions3 = ["Left", "Right", "Straight", "l", "s", "r"]
+LimitAchieve = False
 
 def Moves (num):
   allskills = {
-   'Fire': ["Wildfire", "Hellwheel", "Lavaflux", "Ignite", "Combustion"],
-   'Water': ["Splash", "Purify", "Frostbite", "Whirlpool", "Recover"],
-   'Earth': ["Tremor", "Woodslam", "Quicksand", "Gaiaslide", "Stone tomb"],
-   'Air': ["Gust", "Airjet", "Tornado", "Lightning", "Air Vortex"],
-   'Light': ["Flash", "Healing", "Lightspear", "Deityblade", "Blessing"],
-   'Darkness': ["Astonish", "Lifedrain", "Riftsplit", "Bloodlust", "Dark eclipse"],
-   'Swag': ["Meme", "Roast", "Smokeweed", "Swagburn", "Meme overdose"],
-   'Unknown': [],
+   'Fire': ["Wildfire", "Hellwheel", "Aura dance", "Lavaflux", "Ignite", "Combustion", "Inferno meteor"],
+   'Water': ["Splash", "Purify", "Aura shield", "Frostbite", "Whirlpool", "Recover", "Ocean tempest"],
+   'Earth': ["Tremor", "Woodslam", "Aura dance", "Quicksand", "Gaiaslide", "Stone tomb", "Volcanic core"],
+   'Air': ["Gust", "Airjet", "Aura dance", "Tornado", "Lightning", "Air Vortex", "Thunder sky"],
+   'Light': ["Flash", "Healing", "Aura shield", "Lightspear", "Deityblade", "Blessing", "Genesis"],
+   'Darkness': ["Astonish", "Lifedrain", "Aura dance", "Riftsplit", "Bloodlust", "Dark eclipse", "Black hole"],
+   'Swag': ["Meme", "Roast", "Smokeweed", "aura shield", "Swagburn", "Meme overdose", "Three sixty"],
+   'Cosmic': [],
    'Normal': [],
   }
   return allskills.get(BasicElement)[num-1]
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
-
 print("WARNING: Don't type anything unless you are told to.")
 print(" ")
 time.sleep(3)
-
-print ("Welcome to Earth, a beautiful planet full of life...")
-
-time.sleep(3)
-
+print("Do you want to hear the prologue?")
+Prologuechoice = Menu.choiceInput("Yes", "No")
+if Prologuechoice == "Yes":
+  print(" ")
+  print("Welcome to Earth, a magnificent planet where life flourishes, and people and nature live in cohesion and peace with each other. There has always been peace and kindness in this world.")
+  time.sleep(6)
+  print(" ")
+  print("But a dark force has risen. His name is the Overlord. He tried to take over the world centuries ago, but was stopped by ancient heroes, who sealed him away using their aura. The overlord was imprisoned, but nevertheless plotted for revenge and world domination")
+  time.sleep(6)
+  print(" ")
+  print("The ancient heroes growed old and perished however, and along with them, their aura's have extinguished. And during his prison, the Overlord gained back his strength, and he was able to break the heroes' seal.")
+  time.sleep(6)
+  print(" ")
+  print("With no-one to stop him, he has seized the dark lands, and has gained an immense army of all races, ready to conquer the world!")
+  time.sleep(5)
+  print(" ")
+  print("But ancient prophets made a prophecy, that when the Overlord returns, someone will rise up to either stop the Overlord, or join forces with him. It's up to you!")
+time.sleep(2)
+print(" ")
 while True:
-  nick = input("Hello there! What is your name?")
-  if len(nick) > 0:
+  print("Hello there, chosen one! What is your name?")
+  nick = Menu.validInput()
+  if nick == "Dat Backdoor":
+    print("Welcome, mighty backdoor!")
+    P1= party(nick, 30, 500, 4)
+  else:
     if nick == "Cesar":
       print("So your name is %s! That is a really good name!"%nick)
     elif nick =="Owen":
       print("So your name is %s! You remind me of someone..."%nick)
     else:  
       print ("So your name is %s!"%nick)
-    P1= Player(nick, 3, 1)
+    P1= party(nick, 30, 4, 4)
     break
-  else:
-    print ("Try again, my friend :)")
-    
 print(" ")
-
 time.sleep(3)
-  
 while (True):
   BasicElement = input("In ancient times, there have been six elements of nature: Fire, Water, Earth, Air, Light and Darkness. Which element do you feel most connected with?")
-  if BasicElement in types:
-    print(" ")
-    print(elementTxt(BasicElement))
-    time.sleep(1)
-    P1.add_type(BasicElement)
-    print(" ")
-    P1.add_move(Moves(1))
-    print(" ")
-    P1.add_move(Moves(2))
-    time.sleep(1)
-    break
+  if BasicElement in switchers.types:
+    if BasicElement == "Cosmic":
+      print(" ")
+      print("You cannot use this element!")
+      time.sleep(2)
+      print(" ")
+    else:
+      print(" ")
+      switchers.get_obj(switchers.types,BasicElement).desc()
+      time.sleep(1)
+      P1.add_type(BasicElement)
+      print(" ")
+      P1.add_move(Moves(1))
+      print(" ")
+      P1.add_move(Moves(2))
+      time.sleep(1)
+      break
   else:
     print ("Try again, my friend :)")
 print(" ")
 print ("And so, your adventure and quest begins...")
 time.sleep(3)
-while True:
-  Dungeon1choice =  input("300 a.c. You are in a dungeon. You walk until you find a passageway with three ways, one left, one right, and one straight before you. Which way should you go? Left, Right or Straight?")
-  if Dungeon1choice in directions:
-    print (" ")
-    print("You took the %s path."%Dungeon1choice)
-    time.sleep(1)
-    if Dungeon1choice == 'Left' or Dungeon1choice == "l":
-      print(" ")
-      print ("Oh no! There is a goblin up ahead!")
-      P2 = Player("Goblin", 3, 1)
-      P2.add_move("GoblinKnife")
-      print(" ")
-      print("A goblin appeared! He is kinda ugly.")
-      battle(P1,P2)
-    elif Dungeon1choice == 'Right' or Dungeon1choice == "r":
-      print(" ")
-      print ("Welp, no enemies ahead! :)")
-    else:
-      print(" ")
-      print ("NO! That is a stone golem up ahead! This will be a difficult fight ;-;")
-      P2 = Player("StoneGolem", 5, 0.5)
-      P2.add_move("Boulder Drop")
-      print(" ")
-      print("The stone golem guarding the middle path attacks you!")
-      battle(P1,P2)
-    break
-  else: 
-    print ("Try again, my friend :)")
+print("300 a.c. You are in a dungeon. You walk until you find a passageway with three ways, one left, one right, and one straight before you. Which way should you go? Left, Right or Straight?")
+Dungeon1choice = Menu.directionInput("Left","Right", "Straight")
+print (" ")
+print("You took the %s path."%Dungeon1choice)
+time.sleep(1)
+if Dungeon1choice == 'Left':
+  print(" ")
+  print ("Oh no! There is a goblin up ahead!")
+  P2 = enemy("Goblin", 30, 4, 4, "Bandage")
+  P2.add_move("GoblinKnife")
+  print(" ")
+  print("A goblin appeared! He is kinda ugly.")
+  Menu.battle(P1,P2)
+elif Dungeon1choice == 'Right':
+  print(" ")
+  print ("Welp, no enemies ahead! :)")
+else:
+  print(" ")
+  print ("NO! That is a stone golem up ahead! This will be a difficult fight ;-;")
+  P2 = enemy("Stone Golem", 50, 2, 8, "Bandage")
+  P2.add_move("Boulder Drop")
+  print(" ")
+  print("The stone golem guarding the middle path attacks you!")
+  Menu.battle(P1,P2)
+Menu.Smenu(P1)
 time.sleep(3)
 print(" ")
 print("You walk out the %s Path. You proceed to the inner tomb..."%Dungeon1choice)
 time.sleep(3)
 print(" ")
 print("You found the inner tomb. You can see all kinds of treasure lying around. Suddenly, you hear a cold and dread voice speaking: 'YOU COME TO STEAL MY TREASURE, AND YOU WILL NOW FEEL MY WRATH!'. Turning around, you see a levitating corpse with a crown. You have no choice but to battle him to get out of here alive...")
-P2 = Player("DeadKing",7,1)
+P2 = enemy("DeadKing",60,3,3)
 P2.add_move("Flames of Exile")
 time.sleep(3)
 print(" ")
@@ -353,14 +836,16 @@ time.sleep(3)
 print(" ")
 print("However, you can feel an mysterious aura enveloping you. You feel stronger now!")
 P1.powerUp(1.5)
-battle(P1,P2)
+Menu.battle(P1,P2)
 print(" ")
 print("The undead king has vanished, leaving no trace behind whatsoever. You gained experience, and leveled up! Your health, attack have increased, and you learned a new skill!")
 print(" ")
 time.sleep(3)
-P1.maxHealth = P1.maxHealth + 4
-P1.health = P1.health + 3
-P1.attackPower = P1.attackPower + 0.5
+P1.maxHealth +=  40
+P1.health +=  30
+P1.attackPower +=  2
+P1.defencePower += 2
+P1.add_move(Moves(3))
 print("You have %s hp and %s attack now." %(P1.health, P1.attackPower))
 time.sleep(3)
 print("You find a secret switch in the tomb, which opens a secret passage. You take the passage, and you arrive in a small hall. You can see a pedestal with a key lying on it. You take the key.")
@@ -371,13 +856,13 @@ print(" ")
 time.sleep(3)
 print("As you walk outside, you see a thief standing before you. He says: 'Hand over the good stuff or else!' He is holding a mace. You have to battle him!")
 time.sleep(3)
-P2 = Player("Ambushing thief", 7, 1.5)
+P2 = enemy("Ambushing thief", 70, 6, 6)
 print(" ")
-P2.add_move("ThiefBash")
+P2.add_move("Thief Bash")
 print(" ")
 time.sleep(3)
 
-battle(P1, P2)
+Menu.battle(P1, P2)
 
 time.sleep(5)
 print(" ")
@@ -416,16 +901,16 @@ time.sleep(3)
 print(" ")
 print("Black knight: 'Very well then, prepare to DIE!'")
 print(" ")
-P2 = Player("Black Knight",10 ,1)
+P2 = enemy("Black Knight",100, 4, 4)
 P2.add_move("Greatsword Slash")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Black Knight: 'Augh! I may have lost, but i will return, and when that day comes, you will tremble in fear of me!'The Black Knight leaves.")
 time.sleep(3)
 print(" ")
 print("%s: 'Okay, he's gone. Where do we need to head?'"%nick)
-time.sleep(3)
+time.sleep(1)
 print(" ")
 print("Old man: 'We need to pass through Elder Woods first, youngster .'")
 time.sleep(3)
@@ -448,11 +933,11 @@ print(" ")
 print("The spider uses it's string to come down. It must be at least 1 meter high, it is enormous. The spider prepares to fight!")
 time.sleep(3)
 print(" ")
-P2 = Player("Wood Spider", 12, 1.5)
-P2.add_move("ToxicFangs")
+P2 = enemy("Wood Spider", 120, 6, 6)
+P2.add_move("Toxic Fangs")
 P2.add_move("Rest")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 print(" ")
 time.sleep(3)
 print("The spider is heavily wounded, and flees and crawls over the trees to escape. %s: 'Phew, that was close, but i think i have been' - ugh - 'poisoned...'"%nick)
@@ -482,11 +967,11 @@ print(" ")
 print("The spider queen prepares herself for combat!")
 print(" ")
 time.sleep(3)
-P2 = Player("Spider Queen", 15, 1)
+P2 = enemy("Spider Queen", 150, 4, 4)
 P2.add_move("ToxicFangs")
 P2.add_move("Swarm")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("The spider queen recovers, and is about to attack you when suddenly, a green flash of light appears from the distance that scares of the spiders. None of them stayed to attack you or the old man.")
@@ -516,11 +1001,11 @@ print(" ")
 print("The forest guardian totem has layed it's flashing eyes on you! You will need to defeat it in order to gain the Forest Key!")
 time.sleep(3)
 print(" ")
-P2 = Player("Forest Totem", 30, 0.25)
+P2 = enemy("Forest Totem", 300, 1, 1)
 P2.add_move("Totem's Flash of Life")
 P2.add_move("Rest")
 P2.add_type("Earth")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("The totem has been defeated, it steps back into the grassy ground where it came from, and disappears. You walk over to the pedestal, and the Forest key is granted to you!")
@@ -532,9 +1017,10 @@ print(" ")
 print("You have leveled up! Your health and attack have increased, and you've learned a new skill!")
 time.sleep(3)
 print(" ")
-P1.add_move(Moves(3))
-P1.maxHealth = P1.maxHealth + 6
-P1.attackPower = P1.attackPower + 1
+P1.add_move(Moves(4))
+P1.maxHealth += 60
+P1.attackPower += 4
+P1.defencePower += 4
 time.sleep(3)
 print(" ")
 print("You have %s hp and %s attack now." %(P1.maxHealth, P1.attackPower))
@@ -567,11 +1053,11 @@ print(" ")
 print("The giant crab charges towards you! You will need to battle it first!")
 print(" ")
 time.sleep(3)
-P2 = Player("Giant Crab", 14, 1.25)
+P2 = enemy("Giant Crab", 140, 5, 5)
 P2.add_move("ClawSmack")
 P2.add_move("Splash")
 P2.add_type("Water")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("The giant crab skewaddles back into the sea, but now the jellyfish approaches and attacks!")
@@ -581,11 +1067,11 @@ if nick == "Cesar":
   print("%s: 'Ugh! I hate jellyfish!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Jellyfish", 15, 0.5)
+P2 = enemy("Jellyfish", 150, 2, 2)
 P2.add_move("Constrict")
 P2.add_move("Purify")
 P2.add_type("Water")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("As the jellyfish is defeated, it flees back into sea.")
@@ -630,11 +1116,11 @@ print(" ")
 print("The Black Knight prepares himself for revenge against you! It seemed he has gained an attribute!")
 time.sleep(2)
 print(" ")
-P2 = Player("Black Knight", 16, 1.5)
+P2 = enemy("Black Knight", 160, 6, 6)
 P2.add_move("Greatsword Slash")
 P2.add_move("Lifedrain")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Black Knight: 'NO! I lost again to this kid! I won't forget this, i will return!' The Black Knight leaves.")
@@ -681,11 +1167,11 @@ print(" ")
 print("Demigod Ignis: 'You must be %s, i have been given the task to eliminate you! My creator does not want you to stop him, so you will perish now!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Demigod Ignis", 18, 1.1)
+P2 = enemy("Demigod Ignis", 180, 5, 5)
 P2.add_move("Hellwheel")
 P2.add_move("Demigod Wing Attack")
 P2.add_type("Fire")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Demigod Ignis: 'Urgh, i haven't been hurt by any mortal this much, you will see me again mortal, and when you will, i will DESTROY you!' The demigod takes off.")
@@ -709,10 +1195,10 @@ print(" ")
 print("%s: 'Ugh, get away from me!'"%nick)
 time.sleep(2)
 print(" ")
-P2 = Player("Bat swarm", 15, 1.5)
+P2 = enemy("Bat swarm", 150, 6, 6)
 P2.add_move("Lifedrain")
 P2.add_type("Air")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(2)
 print(" ")
 print("%s: 'That was annoying, luckily we made it out without any other troubles.'"%nick)
@@ -726,11 +1212,11 @@ print(" ")
 print("Our heroes have emerged from the cave, and they are near the giant lake now. All kinds of fish and coral can be clearly seen inside the lake. When %s tries to pass, a sawfish appeared! %s will have to battle it!"%(nick, nick))
 time.sleep(2)
 print(" ")
-P2 = Player("Guarding Sawfish", 15, 1.3)
+P2 = enemy("Guarding Sawfish", 150, 5, 5)
 P2.add_move("Splash")
 P2.add_move("Cut")
 P2.add_type("Water")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(2)
 print(" ")
 print("As the sawfish swims away, %s notices a pedestal in the middle of the lake. On it lies an Coral Key."%nick)
@@ -749,11 +1235,11 @@ print(" ")
 print("It seems that is the Lake Guardian guarding the Coral Key. It looks like an giant dinosaur combined with a shark. %s will have to beat it to prove worthy as owner of the Key..."%nick)
 time.sleep(4)
 print(" ")
-P2 = Player("Leviathan", 30, 0.45)
+P2 = enemy("Leviathan", 300, 2, 2)
 P2.add_move("Leviathan Hydro Storm")
 P2.add_move("Frostbite")
 P2.add_type("Water")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(2)
 print(" ")
 print("%s has defeated the Leviathan. It stares at %s for a second, then dives underwater and vanishes, giving you access to the Key. You have gained the Coral Key!"%(nick, nick))
@@ -765,9 +1251,10 @@ print(" ")
 print("You have leveled up! Your health and attack have increased, and you've learned a new skill!")
 time.sleep(3)
 print(" ")
-P1.add_move(Moves(4))
-P1.maxHealth = P1.maxHealth + 6
-P1.attackPower = P1.attackPower + 1
+P1.add_move(Moves(5))
+P1.maxHealth += 60
+P1.attackPower += 4
+P1.defencePower += 4
 time.sleep(3)
 print(" ")
 print("You have %s hp and %s attack now." %(P1.maxHealth, P1.attackPower))
@@ -790,11 +1277,11 @@ time.sleep(3)
 print("Guard: 'Halt! We have heard of you, %s. Chosen one, let me test your strength in battle!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Desert Guard", 25, 1.5)
+P2 = enemy("Desert Guard", 250, 6, 6)
 P2.add_move("Deityblade")
 P2.add_move("Healing")
 P2.add_type("Light")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Guard: 'That was a rough battle, you are the true chosen one %s!'"%nick)
@@ -848,44 +1335,42 @@ print(" ")
 print("%s: 'Aah!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Wild Bear", 20, 2)
+P2 = enemy("Wild Bear", 200, 8, 8)
 P2.add_move("Slash")
 P2.add_move("Rest")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s: 'Well, he's gone. I survived it.'"%nick)
 time.sleep(3)
 print(" ")
-while True:
-  Mountainchoice = input("As you go further, the cave splits in two directions, Left or Right. Where do you go?")
-  if Mountainchoice in directions2:
-    print (" ")
-    print("You took the %s path."%Mountainchoice)
-    time.sleep(1)
-    if Mountainchoice == 'Left' or Mountainchoice == "l":
-      print(" ")
-      print("%s went the left path, only to be awaited by a golem covered in crystals! The golem attacks you!"%nick)
-      P2 = Player("Crystal Golem", 25, 1.5)
-      P2.add_move("Boulder Drop")
-      P2.add_move("Crystal Jab")
-      P2.add_type("Earth")
-      print(" ")
-      time.sleep(2)
-      battle(P1, P2)
-    elif Mountainchoice == 'Right' or Mountainchoice == "r":
-      print(" ")
-      print("%s went down the right path, but as %s proceded, a zombie was in his way. You will have to beat it!"%(nick, nick))
-      P2 = Player("Zombie", 15, 2)
-      P2.add_move("Astonish")
-      P2.add_move("Foul Miasma")
-      P2.add_type("Darkness")
-      print(" ")
-      time.sleep(2)
-      battle(P1, P2)
-    break
-  else: 
-    print ("Try again, my friend :)")
+print("As you go further, the cave splits in two directions, Left or Right. Where do you go?")
+Mountainchoice = Menu.directionInput("Left", "Right")
+  
+print (" ")
+print("You took the %s path."%Mountainchoice)
+time.sleep(1)
+if Mountainchoice == 'Left':
+  print(" ")
+  print("%s went the left path, only to be awaited by a golem covered in crystals! The golem attacks you!"%nick)
+  P2 = enemy("Crystal Golem", 250, 6, 6)
+  P2.add_move("Boulder Drop")
+  P2.add_move("Crystal Jab")
+  P2.add_type("Earth")
+  print(" ")
+  time.sleep(2)
+  Menu.battle(P1, P2)
+else:
+  print(" ")
+  print("%s went down the right path, but as %s proceeded, a zombie was in his way. You will have to beat it!"%(nick, nick))
+  P2 = enemy("Zombie", 150, 8, 8)
+  P2.add_move("Astonish")
+  P2.add_move("Foul Miasma")
+  P2.add_type("Darkness")
+  print(" ")
+  time.sleep(2)
+  Menu.battle(P1, P2)
+    
 time.sleep(3)
 print(" ")
 print("%s: 'That tunnel was horrible, i guess the other one must have been horrible too.'"%nick)
@@ -900,12 +1385,12 @@ print(" ")
 print("But as %s tries to get there, a lizard on a single wheeler jumps out of nowhere and stands in the way. He then taunts %s with a dank meme. %s is enraged and battles it."%(nick, nick , nick))
 time.sleep(3)
 print(" ")
-P2 = Player("Datboi", 40, 1.4)
+P2 = enemy("Datboi", 400, 6, 6)
 P2.add_move("Meme")
 P2.add_move("Roast")
 P2.add_move("Hellwheel")
 P2.add_type("Swag")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s: '>:( i'm glad that guy is gone, because he was pissing me off!'"%nick)
@@ -923,11 +1408,11 @@ print(" ")
 print("%s: 'Hey, that's not fair!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Demigoddes Terra", 30, 1.3)
+P2 = enemy("Demigoddes Terra", 300, 5, 5)
 P2.add_move("Demigod Wing Attack")
 P2.add_move("Woodslam")
 P2.add_type("Earth")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Demigoddes Terra: Argh! Ventus, get %s!'"%nick)
@@ -936,11 +1421,11 @@ print(" ")
 print("Demigod Ventus: 'Come here %s, when i'm done with you, i will drop you off this mountain!'"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Demigod Ventus", 30, 1.3)
+P2 = enemy("Demigod Ventus", 300, 5, 5)
 P2.add_move("Demigod Wing Attack")
 P2.add_move("Airjet")
 P2.add_type("Air")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Demigod Ventus: 'Urgh, you little bastard! Come over he-'")
@@ -952,24 +1437,18 @@ print(" ")
 print("%s: 'Wait, who was that?'"%nick)
 time.sleep(3)
 print(" ")
-while (True):
-  nick2 = input("(Type stranger's name here)")
-  if len(nick2) > 0:
-    if nick2 == nick:
-      print("(You can't choose the same name as your main character!)")
-    else:
-      if nick2 == "Owen" and nick == "Cesar":
-        print(" ")
-        print("%s: 'My friend!' %s: 'Can i come with you, %s?'"%(nick, nick2, nick))
-      elif nick == "Owen" and nick2 == "Cesar":
-        print(" ")
-        print("%s: 'There is that soup chicken again, %s! %s:'Lemme come with you!'"%(nick, nick2, nick2))
-      else:
-        print(" ")
-        print("%s: 'Hello there, chosen one. My name is %s, and i have heard of your strength. I am here to join you in your quest."%(nick2, nick2))
-      break
-  else:
-    print("Try again, my friend :)")
+nick2 = Menu.validInput(nick)
+if nick2 == "Owen" and nick == "Cesar":
+  print(" ")
+  print("%s: 'My friend!' %s: 'Can i come with you, %s?'"%(nick, nick2, nick))
+elif nick == "Owen" and nick2 == "Cesar":
+  print(" ")
+  print("%s: 'There is that soup chicken again, %s! %s:'Let me come with you!'"%(nick, nick2, nick2))
+else:
+  print(" ")
+  print("%s: 'Hello there, chosen one. My name is %s, and i have heard of your strength. I am here to join you in your quest."%(nick2, nick2))
+
+    
 time.sleep(3)
 print(" ")
 print("%s: 'Uhm, okay? I guess you could come along?'"%nick)
@@ -980,7 +1459,7 @@ time.sleep(3)
 print(" ")
 print("%s has joined the party!"%nick2)
 SecretP = True
-P3 = Player(nick2, 18, 2.5)
+P3 = party(nick2, 180, 10, 10)
 P3.add_type("Unknown")
 P3.add_move("Arrowfire")
 P3.add_move("Brewing")
@@ -990,10 +1469,10 @@ print("And so, with a new addition to the party, %s and %s go through the other 
 time.sleep(3)
 print(" ")
 print("%s: 'Let me handle this.'"%nick2)
-P2 = Player("Goblin", 15, 1.5)
+P2 = enemy("Goblin", 150, 6, 6)
 P2.add_move("GoblinKnife")
 P2.add_move("Cut")
-battle(P3, P2)
+Menu.battle(P3, P2)
 time.sleep(3)
 print(" ")
 print("%s: 'That is that, let's go!'"%nick2)
@@ -1011,11 +1490,11 @@ print(" ")
 print("The mighty eagle attacks %s!"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Mighty Eagle", 25, 1.5)
+P2 = enemy("Mighty Eagle", 250, 6, 6)
 P2.add_move("Tornado")
 P2.add_move("Eagle Sky Crash")
 P2.add_type("Air")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s has defeated the eagle guardian. It flies away, and %s walks over to pick up the key."%(nick, nick))
@@ -1026,9 +1505,10 @@ time.sleep(3)
 print(" ")
 print("You have leveled up! Your attack and health, increased, your aura has grown, and you have learned a new skill!")
 P1.powerUp(2)
-P1.add_move(Moves(5))
-P1.maxHealth = P1.maxHealth + 4
-P1.attackPower = P1.attackPower + 0.5
+P1.add_move(Moves(6))
+P1.maxHealth += 40
+P1.attackPower += 2
+P1.defencePower += 2
 time.sleep(3)
 print(" ")
 print("You have %s hp and %s attack now." %(P1.maxHealth, P1.attackPower))
@@ -1061,12 +1541,12 @@ print(" ")
 print("Black Knight: 'Because i want to prove that i can beat the kid that i lost to during that one time, and i want that key of yo-' 'hey, you have 4 keys now, i will take them all!'")
 time.sleep(3)
 print(" ")
-P2 = Player("Black Knight", 30, 2.5)
+P2 = enemy("Black Knight", 300, 10, 10)
 P2.add_move("Greatsword Slash")
 P2.add_move("Lifedrain")
 P2.add_move("Riftsplit")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Black Knight: 'NO! GIVE ME THAT KEY OR DIE-'")
@@ -1102,21 +1582,21 @@ print(" ")
 print("%s stands before one hundred demons. %s has to defeat them!"%(nick, nick))
 time.sleep(3)
 print(" ")
-P2 = Player("100 Demons", 50, 2)
+P2 = enemy("100 Demons", 500, 8, 8)
 P2.add_move("Lifedrain")
 P2.add_move("Cut")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s has defeated a lot of demons. However, there are still a lot of demons standing before %s!"%(nick, nick2))
 time.sleep(3)
 print(" ")
-P2 = Player("70 Demons", 40, 1.5)
+P2 = enemy("70 Demons", 400, 6, 6)
 P2.add_move("Lifedrain")
 P2.add_move("Cut")
 P2.add_type("Darkness")
-battle(P3, P2)
+Menu.battle(P3, P2)
 time.sleep(3)
 print(" ")
 print("%s and %s have defeated all demons on their side, and it looks like the golden commander and his troops are defeating the demons on their side as well!"%(nick, nick2))
@@ -1154,11 +1634,11 @@ print(" ")
 print("As %s manages to get up and recover some strength back, a ghostly creature attacks!"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Marsh Fire", 35, 2)
+P2 = enemy("Marsh Fire", 350, 8, 8)
 P2.add_move("Ignite")
 P2.add_move("Astonish")
 P2.add_type("Fire")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s defeated the ghostly creature, and it falls apart in embers and smoke. %s then looks in the distance, where a maze can be seen. %s heads to the maze in the distance"%(nick, nick, nick))
@@ -1167,11 +1647,11 @@ print(" ")
 print("As %s is on the way, %s can see the silhouette of a man walking strangly, holding a giant sword. When it comes closer it looks like it has died a long time ago, and it attacks %s!"%(nick, nick, nick))
 time.sleep(3)
 print(" ")
-P2 = Player("Fallen Man", 40, 2.5)
+P2 = enemy("Fallen Man", 400, 10, 10)
 P2.add_move("Greatsword Slash")
 P2.add_move("Foul Miasma")
 P2.add_type("Darkness")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("As the man-like creature is defeated, it's flesh rots away, leaving a pile of bones and the sword behind.")
@@ -1189,112 +1669,668 @@ print(" ")
 
 #mazecombo: RLRL
 while True:
-  mazechoice = input("As %s reached the entrance of the maze, three openings can be seen; one on the left; one straight forward; one on the right. Where do you head? Left, Straight or Right?"%nick)
-  if mazechoice in directions3:
-    print(" ")
-    print("You took the %s path."%mazechoice)
+  print("As %s reached the entrance of the maze, three openings can be seen; one on the left; one straight forward; one on the right. Where do you head? Left, Straight or Right?"%nick)
+  mazechoice = Menu.directionInput("Left", "Right", "Straight")
+  print(" ")
+  print("You took the %s path."%mazechoice)
+  time.sleep(3)
+  if mazechoice == "Right":
     time.sleep(3)
-    if mazechoice == "Left" or mazechoice == "l":
+    print(" ")
+    print("As you walk down this path, you feel sure that you made the right decision here. Eventually, the path splits in three ways again. Where do you head? Left, Straight or Right?")
+    mazechoice = Menu.directionInput("Left", "Right", "Straight")
+    if mazechoice == "Left":
       time.sleep(3)
       print(" ")
-      print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
+      print("%s: 'How long is this maze?'"%nick)
       time.sleep(3)
       print(" ")
-      print("%s: 'Ah come on!'"%nick)
-    elif mazechoice == "Straight" or mazechoice == "s":
-      time.sleep(3)
-      print(" ")
-      print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-      time.sleep(3)
-      print(" ")
-      print("%s: 'Ah come on!'"%nick)
-    elif mazechoice == "Right" or mazechoice == "r":
-      time.sleep(3)
-      print(" ")
-      mazechoice = input("As you walk down this path, you feel sure that you made the right decision here. Eventually, the path splits in three ways again. Where do you head? Left, Straight or Right?")
-      if mazechoice in directions3:
+      print:("As you walk down this path, you know it was the right choice again. Again, the path splits in three ways. Where do you head? Left, Straight or Right?")
+      mazechoice = Menu.directionInput("Left", "Right", "Straight")
+      if mazechoice == "Right":
+        time.sleep(3)
+        print(" ")
+        print("As you walk down the path, you can see the other side of the maze. You are almost there! At last, the path splits in three ways. Where do you head? Left, Straight or Right?")
+        mazechoice = Menu.directionInput("Left", "Right", "Straight")
         print(" ")
         print("You took the %s path."%mazechoice)
-        if mazechoice == "Left" or mazechoice == "l":
-          time.sleep(3)
-          print(" ")
-          print("%s: 'How long is this maze?'"%nick)
-          time.sleep(3)
-          print(" ")
-          mazechoice = input("As you walk down this path, you know it was the right choice again. Again, the path splits in three ways. Where do you head? Left, Straight or Right?")
-          if mazechoice in directions3:
-            print(" ")
-            print("You took the %s path."%mazechoice)
-            if mazechoice == "Left" or mazechoice == "l":
-              time.sleep(3)
-              print(" ")
-              print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-              time.sleep(3)
-              print(" ")
-              print("%s: '****(bad words)'"%nick)
-            elif mazechoice == "Straight" or mazechoice == "s":
-              time.sleep(3)
-              print(" ")
-              print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-              time.sleep(3)
-              print(" ")
-              print("%s: '****(bad words)'"%nick)
-            elif mazechoice == "Right" or mazechoice == "r":
-              time.sleep(3)
-              print(" ")
-              mazechoice = input("As you walk down the path, you can see the other side of the maze. You are almost there! At last, the path splits in three ways. Where do you head? Left, Straight or Right?")
-              if mazechoice in directions3:
-                print(" ")
-                print("You took the %s path."%mazechoice)
-                if mazechoice == "Left" or mazechoice == "l":
-                  time.sleep(3)
-                  print(" ")
-                  print("As you walk down this last path, you can see the exit of the maze.")
-                  time.sleep(3)
-                  print(" ")
-                  print("%s: 'Finally!'"%nick)
-                  time.sleep(3)
-                  print(" ")
-                  print("But as you proceed, some sort of golem blocks the way. You have to battle it to get out of the maze!")
-                  time.sleep(3)
-                  print(" ")
-                  P2 = Player("Maze Golem", 35, 2)
-                  P2.add_move("Boulder Drop")
-                  P2.add_move("Riftsplit")
-                  P2.add_type("Darkness")
-                  battle(P1, P2)
-                  time.sleep(3)
-                  print(" ")
-                  print("You defeated the golem! It steps aside, and you finally exited the maze!")
-                  break
-                elif mazechoice == "Straight" or mazechoice == "s":
-                  time.sleep(3)
-                  print(" ")
-                  print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-                  time.sleep(3)
-                  print(" ")
-                  print("%s: ':-;'"%nick)
-                elif mazechoice == "Right" or mazechoice == "r":
-                  time.sleep(3)
-                  print(" ")
-                  print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-                  time.sleep(3)
-                  print(" ")
-                  print("%s: ':-;'"%nick)
-        elif mazechoice == "Straight" or mazechoice == "s":
-          time.sleep(3)
-          print(" ")
-          print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-          time.sleep(3)
-          print(" ")
-          print("%s: 'You gotta be kidding me!'"%nick)
-        elif mazechoice == "Right" or mazechoice == "r":
-          time.sleep(3)
-          print(" ")
-          print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
-          time.sleep(3)
-          print(" ")
-          print("%s: 'You gotta be kidding me!'"%nick)
-  else:
-    print(" ")
-    print("Try again, my friend :)")
+        if mazechoice == "Left":
+          break
+  time.sleep(3)
+  print(" ")
+  print("As you walk down this path, you start losing your oriëntation, and before you know it, you are at the beginning again...")
+  time.sleep(3)
+  print(" ")
+  print("%s: 'Ah come on!'"%nick)
+  
+time.sleep(3)
+print(" ")
+print("As you walk down this last path, you can see the exit of the maze.")
+time.sleep(3)
+print(" ")
+print("%s: 'Finally!'"%nick)
+time.sleep(3)
+print(" ")
+print("But as you proceed, some sort of golem blocks the way. You have to battle it to get out of the maze!")
+time.sleep(3)
+print(" ")
+P2 = enemy("Maze Golem", 350, 8, 8)
+P2.add_move("Boulder Drop")
+P2.add_move("Riftsplit")
+P2.add_type("Darkness")
+Menu.battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("You defeated the golem! It steps aside, and you finally exited the maze!")
+time.sleep(3)
+print(" ")
+print("%s finally exited  the maze, and walks further. %s can see some kind of ancient tower poking out of the ground not far from here. Suddenly, %s is ambushed by a gorilla!"%(nick, nick, nick))
+time.sleep(3)
+print(" ")
+P2 = Player("Harambe", 350, 9, 9)
+P2.add_move("Meme")
+P2.add_move("Roast")
+P2.add_move("Slash")
+P2.add_type("Swag")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("After %s defeated Harambe, it fled."%nick)
+time.sleep(3)
+print(" ")
+print("%s: 'So this is where the dead go?'"%nick)
+time.sleep(5)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("As %s nearly reached the tall ancient tower, some sort of temple stands in the way. It says:"%nick)
+time.sleep(2)
+print(" ")
+print("'Choose wisely and defeat the guardian, and the blessing is yours.'")
+time.sleep(3)
+print(" ")
+while True:
+  Underworldchoice = input("Which way do you go? Left or Right?")
+  if Underworldchoice in directions2:
+    print (" ")
+    print("You took the %s path."%Underworldchoice)
+    time.sleep(1)
+    if Underworldchoice == 'Left' or Underworldchoice == "l":
+      print(" ")
+      time.sleep(3)
+      print("A fire elemental is in the way!")
+      P2 = Player("Fire Elemental", 500, 4, 8)
+      P2.add_move("Lavaflux")
+      P2.add_move("Monolith Beam")
+      P2.add_type("Fire")
+      battle(P1, P2)
+      time.sleep(3)
+      print(" ")
+      print("%s defeated the fire elemental, and as it vanishes, you can see a red light at the end of the path. The red light then suddenly plunges into your chest, and for some reason, you feel more powerful."%nick)
+      time.sleep(5)
+      print(" ")
+      P1.attackPower = P1.attackPower + 1
+      print("%s's attack went up! %s has %s attack now."%(nick, nick, P1.attackPower))
+      break
+    elif Underworldchoice == 'Right' or Underworldchoice == "r":
+      print(" ")
+      time.sleep(3)
+      print("A water elemental stands in the way!")
+      P2 = Player("Water Elemental", 500, 4, 8)
+      P2.add_move("Frostbite")
+      P2.add_move("Monolith Beam")
+      P2.add_type("Water")
+      battle(P1, P2)
+      time.sleep(3)
+      print(" ")
+      print("%s defeated the water elemental, and as it vanishes, you can see a blue light at the end of the path. The blue light then suddenly plunges into your chest, and for some reason, you feel more healthy now."%nick)
+      time.sleep(5)
+      print(" ")
+      P1.maxHealth = P1.maxHealth + 3
+      print("%s's health went up! %s has %s hp now."%(nick, nick, P1.maxHealth))
+      break
+    else:
+      print("Try again, my friend :)")
+time.sleep(3)
+print(" ")
+print("%s has exited the temple, with one of the two blessings. %s walks over to the ancient tower..."%(nick, nick))
+time.sleep(5)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("As %s reached the tower, %s can see six silhouettes of people around the tower. %s walks over to them."%(nick, nick, nick))
+time.sleep(3)
+print(" ")
+print("Stranger: 'Is that you, the chosen one?'")
+time.sleep(3)
+print(" ")
+print("%s: 'Yes.'"%nick)
+time.sleep(3)
+print(" ")
+print("Stranger: 'Then there is still hope! We must send you back to earth! But let us teach you a skill that will help you against the overlord, %s!'"%nick)
+time.sleep(3)
+print(" ")
+print("As the stranger said that, they all start to perform some ritual. Suddenly, energy is pouring from all six of them, and it pours into you!")
+time.sleep(3)
+print(" ")
+print("You have awoken your inner elemental power, and you have learned a limit break!")
+LimitAchieve == True
+P1.add_move(Moves(7))
+time.sleep(3)
+print(" ")
+print("After %s got the limit break, the six people pour their energy in the tower, which folds out and blasts a ray of light across the sky, forming a portal."%nick)
+time.sleep(3)
+print(" ")
+print("However, during the forming of the portal, a dark and terrifying beast heads to %s and the other people. It appears to be a carnivore, and it charges at %s!"%(nick, nick))
+time.sleep(3)
+print(" ")
+print("Grrrr...")
+time.sleep(3)
+print(" ")
+P2 = Player("Underworld Beast", 500, 12, 12)
+P2.add_move("Bloodlust")
+P2.add_move("Crunch")
+P2.add_move("Slash")
+P2.add_type("Earth")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("As the beast is defeated, %s activates a limit break! With energy flowing all over %s, %s uses %s and blasts the energy into the ground under the beast."%(nick, nick, Moves(7), nick))
+time.sleep(3)
+print(" ")
+print("The ground under the beast weakens, and a fissure opens under the beast, which results into the beast falling in and never to be seen again...")
+time.sleep(3)
+print(" ")
+print("Stranger: 'Go now, chosen one! You can save the world!'"%nick)
+time.sleep(3)
+print(" ")
+print("And with that, %s steps into the portal, and is transported away."%nick)
+time.sleep(5)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("%s: 'W-where am i?...'"%nick)
+time.sleep(3)
+print(" ")
+print("%s appears to have spawned in a wasteland. After a while, %s can stand up."%(nick, nick))
+time.sleep(3)
+print(" ")
+print("As %s stood up, %s could see a barren wasteland of canyons, a desert, and a large volcano could be seen. Suddenly, %s's eye fell on a small but sturdy fortress, and %s could see Greg, %s, %s and the Golden Commander being dragged inside!"%(nick, nick, nick, nick, nick2, Lynxname))
+time.sleep(3)
+print(" ")
+print("%s: 'I have to free them!'"%nick)
+time.sleep(3)
+print(" ")
+print("%s then hears a flapping sound, and looks behind. it was another demigoddes, but this time with crystal-like wings. %s prepares for combat, but stops when %s sees that the demigoddes does not attack."%(nick, nick, nick))
+time.sleep(3)
+print(" ")
+print("Demigoddes Pisci: 'Take it easy there, mortal. I'm not here to destroy you, but to help you.")
+time.sleep(3)
+print(" ")
+print("%s: 'Wait what?'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci: 'It was never my desire to destroy the world, but the Overlord wants to see this world burn. Also, the prophecy speaks of certain people fighting alongside the chosen one.")
+time.sleep(3)
+print(" ")
+print("%s: 'Speak up.'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci: 'These people would join the chosen one according to the prophecy: A man who was once old, a cat-like creature, a warrior who is clad in gold, a figure without element who is hooded, a pseudo-like god, and a dark but persistent warrior.'")
+time.sleep(6)
+print(" ")
+print("%s: 'I guess you are coming with me then.'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci: 'Yes'")
+time.sleep(3)
+print(" ")
+print("And so, %s and the demigoddes head to the fortress..."%nick)
+time.sleep(5)
+print(" ")
+print("They reached the entrance of the fortress, but another demigod is guarding the place. He has white-golden wings.")
+time.sleep(3)
+print(" ")
+print("Demigod Ying: 'I knew you would come, %s, and- Pisci, you traitor! I will strike down both of you!'"%nick)
+time.sleep(3)
+print(" ")
+print("The demigod then blasts Pisci with a ray from the sun. The demigoddes is wounded, and cannot fly now.")
+time.sleep(3)
+print(" ")
+print("Demigod Ying: 'And now you will perish, chosen one!'")
+time.sleep(3)
+print(" ")
+P2 = Player("Demigod Ying", 500, 7, 9)
+P2.add_move("Lightspear")
+P2.add_move("Healing")
+P2.add_move("Demigod Wing Attack")
+P2.add_type("Light")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("Demigod Ying: 'Urgh, you will perish for your sins!'he takes off.")
+time.sleep(3)
+print(" ")
+print("%s: 'You're okay?'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci: 'I am hurt, but i am fine.'")
+time.sleep(3)
+print(" ")
+print("And with that being said, %s used %s to break open the gate!"%(nick, Moves(4)))
+time.sleep(3)
+print(" ")
+print("They head inside, but unfortunately for them, they are attack by what looks dozens of guards!")
+time.sleep(3)
+print(" ")
+print("However, Pisci fires of a big blizzard that freezes all guards.")
+time.sleep(3)
+print(" ")
+print("Pisci: 'You're welcome.'")
+time.sleep(3)
+print(" ")
+print("%s and Pisci head over to the jails..."%nick)
+time.sleep(3)
+print(" ")
+print("In the jails:")
+time.sleep(2)
+print(" ")
+print("Greg: 'Well, i guess all of our hopes is gone now.")
+time.sleep(3)
+print(" ")
+print("Suddenly, they can see two people entering the jail chamber, a woman with icy wings, and a familiar person.")
+time.sleep(3)
+print(" ")
+print("%s: 'It's %s!'"%(nick2, nick))
+time.sleep(3)
+print(" ")
+print("Golden Commander: 'But that is a demigoddes! Get her!'")
+time.sleep(3)
+print(" ")
+print("%s: 'Calm down, she will help us with our quest.'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci then freezes of all the locks from the jail doors, freeing all party members.")
+time.sleep(3)
+print(" ")
+print("%s: 'Mreow?'"%Lynxname)
+time.sleep(3)
+print(" ")
+print("%s: 'Okay, we will trust you, for now.'"%nick2)
+time.sleep(3)
+print(" ")
+print("But the reunion is not for long, as a Blazing Golem enters the chamber!")
+time.sleep(3)
+print(" ")
+P2 = Player("Blazing Golem", 400, 8, 10)
+P2.add_move("Ignite")
+P2.add_move("Boulder Drop")
+P2.add_move("Tremor")
+P2.add_type("Fire")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("Greg: 'So where do we head now?'")
+time.sleep(3)
+print(" ")
+print("%s: 'To the volcano in the distance.'"%nick)
+time.sleep(5)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("Our heroes have exited the fortress, and they have to cross the canyon and a desert to reach the volcano. They're now at the canyon, but it's bleeding hot out there.")
+time.sleep(3)
+print(" ")
+print("%s: 'It is too hot to venture now, let's make a camp now and move on at night.'everyone nods."%nick2)
+time.sleep(5)
+print(" ")
+print("Several hours later...")
+time.sleep(3)
+print(" ")
+print("%s: 'Ok, everyone is awake. Let's move on now.'"%nick)
+time.sleep(3)
+print(" ")
+print("As the heroes venture, %s walks a bit too close near a cave opening, and is dragged in by a monster!'"%nick2)
+time.sleep(3)
+print(" ")
+print("%s: '%s!'"%(nick, nick2))
+time.sleep(4)
+print(" ")
+print("%s: 'Where am i?'"%nick2)
+time.sleep(3)
+print(" ")
+print("%s appears to be inside a cavern. %s can see a lot of remains lying on the cavern floor. %s sees a small tunnel, and takes the path."%(nick2, nick2, nick2))
+time.sleep(3)
+print(" ")
+print("Unfortunately, a spider stands in the way!")
+time.sleep(3)
+print(" ")
+P2 = Player("Canyon Spider", 200, 6, 6)
+P2.add_move("ToxicFangs")
+P2.add_move("Cut")
+P2.add_move("Crunch")
+P2.add_type("Earth")
+battle(P3, P2)
+time.sleep(3)
+print(" ")
+print("%s has leveled up, and %s's attack and health have increased!"%(nick2, nick2))
+time.sleep(2)
+print(" ")
+P3.attackPower = P3.attackPower + 1
+P3.health = P3.health + 3
+P3.defencePower = P3.defencePower + 3
+print("%s has %s attack and %s hp now."%(nick2, P3.attackPower, P3.health))
+time.sleep(3)
+print(" ")
+print("%s killed the spider, and moves on. %s then enters a large space in the cave, where some kind of reptilian monster can be seen sleeping. Behind the monster, %s sees an exit."%(nick2, nick2, nick2))
+time.sleep(3)
+print(" ")
+print("%s tries to reach the exit, but the monster slammed %s away with it's tail. The monster then awakes and roars!"%(nick2, nick2))
+time.sleep(3)
+print(" ")
+print("The monster tries to stomp on %s, but misses. As a result, the monster stomps in anger, causing the cavern to shake and slowly crumble."%nick)
+time.sleep(3)
+print(" ")
+print("%s fires off a arrow, but the monster's skin is so hard that it just bounces off. %s hope of defeating it sinks, when a rock falls down before %s."%(nick2, nick2, nick2))
+time.sleep(3)
+print(" ")
+print("Inside the rock lies some kind of sword. The sword has an iron hilt, and an diamond edge, which looks like it is not from this world.")
+time.sleep(3)
+print(" ")
+print("%s takes the blade."%nick2)
+time.sleep(3)
+print(" ")
+print("%s has gained the Cosmic Blade! This is a mystical blade with many abilities, that %s yet has to discover..."%(nick2, nick2))
+time.sleep(3)
+print(" ")
+P3.add_move("Cosmic Fury")
+P3.add_type("Cosmic")
+time.sleep(3)
+print(" ")
+print("The monster attacks %s!"%nick2)
+time.sleep(3)
+print(" ")
+P2 = Player("Monstrious Reptile", 500, 8, 9)
+P2.add_move("Crunch")
+P2.add_move("Slash")
+P2.add_move("Bloodlust")
+P2.add_type("Earth")
+battle(P3, P2)
+time.sleep(3)
+print(" ")
+print("%s eventually cut the monster in half with the newly obtained Cosmic Blade. %s then takes the exit before the cave collapses."%(nick2, nick2))
+time.sleep(3)
+print(" ")
+print("Meanwhile, %s and the rest of the crew are searching for %s."(nick, nick2))
+time.sleep(3)
+print(" ")
+print("%s: 'I'm back!'"%nick2)
+time.sleep(3)
+print(" ")
+print("Golden Commander: 'Good, what is that sword you have there?'")
+time.sleep(3)
+print(" ")
+print("%s: 'I don't know, i found it in a cavern i fell in.'"%nick2)
+time.sleep(3)
+print(" ")
+print("%s: 'Lets move on now.'"%nick)
+time.sleep(5)
+print(" ")
+print("Our heroes are near the end of the canyon, and they can see the desert at the other end of the passage they are walking through.")
+time.sleep(3)
+print(" ")
+print("Pisci: 'This is the desolate desert, which lies close to the drought desert, and in the distance is the Great Caldera. That is probably the home of the fire attribute key you are looking for.'")
+time.sleep(3)
+print(" ")
+print("%s: 'But the overlord took all of my other keys when he sent me to the underworld!'"%nick)
+time.sleep(3)
+print(" ")
+print("Pisci: 'Actually, since i'm still a demigoddes, i had access to the keys and took them with me.'she states as she shows the keys and gives them to %s."%nick)
+time.sleep(3)
+print(" ")
+print("%s: 'Perfect! Let's head to the Great Caldera!'"%nick)
+time.sleep(3)
+print(" ")
+print("But as they exit the pass, an earth elemental attacks them, and %s prepares for battle!"%nick)
+time.sleep(3)
+print(" ")
+P2 = Player("Earth Elemental", 550, 7, 10)
+P2.add_move("Monolith Beam")
+P2.add_move("Stone tomb")
+P2.add_move("Tremor")
+P2.add_type("Earth")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+print("%s defeated the earth elemental, and it steps aside, letting %s and the others pass."%(nick, nick))
+time.sleep(3)
+print(" ")
+print("And so, they arrived into the desert.")
+time.sleep(5)
+print(" ")
+print("Our heroes have been walking for some time. They can see an oasis in front of them.")
+time.sleep(3)
+print(" ")
+print("Greg: 'There is some water!")
+time.sleep(3)
+print(" ")
+print("%s: 'What are we waiting for? Let's go!'"%nick2)
+time.sleep(3)
+print(" ")
+print("But then all of sudden, two giant desert worms submerge from the sand, and attack our heroes! %s and %s stand to defend the rest!"%(nick, nick2))
+time.sleep(3)
+print(" ")
+P2 = Player("Gaia Desert Worm", 600, 9, 7)
+P2.add_move("Toxic Fangs")
+P2.add_move("Crunch")
+P2.add_move("Quicksand")
+P2.add_type("Earth")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+battle(P3, P2)
+print(" ")
+print("The desert worms are defeated by our two warriors, and they dive back into the ground again.")
+time.sleep(3)
+print(" ")
+print("%s: 'We did it!'"%nick2)
+time.sleep(3)
+print(" ")
+print("But it is too early to rejoice, as hundreds of desert worms appear from the ground to attack our gang.")
+time.sleep(3)
+print(" ")
+print("Greg: 'God save us all!'")
+time.sleep(3)
+print(" ")
+print("They all prepare to attack our heroes, but then %s suddenly starts glowing!"%Lynxname)
+time.sleep(3)
+print(" ")
+print("%s: 'MEOW!'"%Lynxname)
+time.sleep(3)
+print(" ")
+print("*a bright flash appears")
+time.sleep(3)
+print(" ")
+print("GRROOOAARRRR!")
+time.sleep(3)
+print(" ")
+print("%s seems to have disappeared, and in it's place now stands a white lion-like creature with feathery wings and a scorpion tail. %s seems to have transformed into a manticore!"%(Lynxname, Lynxname))
+time.sleep(3)
+print(" ")
+print("%s flies up into the sky and is cloaked into a bright light, and then fires off balls of fire and light that scorch all desert worms, killing them in the process."%Lynxname)
+time.sleep(3)
+print(" ")
+print("%s then glows and reverts back to it's original form, and is a lynx once again."%Lynxname)
+time.sleep(3)
+print(" ")
+print("%s: 'Meow :3'"%Lynxname)
+time.sleep(3)
+print(" ")
+print("Everyone seems to have dropped their jaw and stares argdt %s with awe, except for Greg."%Lynxname)
+time.sleep(3)
+print(" ")
+print("Greg: 'Heh, i always knew that %s had a special power from the moment i sensed it's mighty aura.'Greg smirks."%Lynxname)
+time.sleep(3)
+print(" ")
+print("%s, %s, Golden Commander, Pisci: '...'"%(nick, nick2))
+time.sleep(3)
+print(" ")
+print("Greg: 'Anyway, let's go to the oasis.'")
+time.sleep(3)
+print(" ")%s 
+print("And so, they all stop by to drink some water at the oasis. They camp up for the night.")
+time.sleep(3)
+print(" ")
+print("The water restored your hp!")
+P1.health = P1.maxHealth
+time.sleep(3)
+print(" ")
+print("*nighttime arrives")
+time.sleep(3)
+print(" ")
+print("Everyone sleeps, except for %s, who is staring at the stars and wonders how to defeat the overlord. Suddenly, a violent splashing can be heard from the water."%nick)
+time.sleep(3)
+print(" ")
+print("%s peers at the water, and is stunned to find out that the pool of water actually is a secret passage filled with water that leads somewhere underground."%nick)
+time.sleep(3)
+print(" ")
+print("Do you want to take the hidden passage or not?")
+passagechoice = Menu.choiceInput("Yes", "No")
+print (" ")
+print("You made your decision, %s."%passagechoice)
+time.sleep(1)
+if passagechoice == "Yes":
+  print(" ")
+  print("%s decided to enter the passage, and dives into the water..."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s is now underwater, and swims through the underwater passage. Eventually, %s surfaces and appears to be in some sort of pyramid."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s steps out of the water but is then grabbed by a couple of tentacles. Two yellow eyes stare at %s."%(nick, nick))
+  time.sleep(3)
+  print(" ")
+  P2 = Player("Ancient Kraken", 600, 10, 10)
+  P2.add_move("Constrict")
+  P2.add_move("Drainage")
+  P2.add_move("Whirlpool")
+  P2.add_move("Crunch")
+  P2.add_type("Water")
+  battle(P1, P2)
+  time.sleep(3)
+  print(" ")
+  print("The kraken screams in pain, releasing %s from it's grip. The kraken then dives into the water and flees."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s: 'I wonder why it attacked me...'"%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s proceeds through the pyramid. Several ancient marks can be read onto the wall.")
+  time.sleep(3)
+  print(" ")
+  print("Unfortunately, %s stepped on a wrong tile, and falls down in a pit!"%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s: 'Aaah!'"%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s now is at the bottom of the pit, and a hissing can be heard. A giant python emerges!")
+  time.sleep(3)
+  print(" ")
+  P2 = Player("Ancient Python", 550, 8, 11)
+  P2.add_move("Constrict")
+  P2.add_move("Crunch")
+  P2.add_move("Toxic Fangs")
+  P2.add_type("Darkness")
+  battle(P1, P2)
+  time.sleep(3)
+  print(" ")
+  print("%s killed the python, and climbs out of the pit, and moves on."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s eventually reaches the main hall, where a tomb lies. Behind the tomb lies a pile of gold, gemstones, but most notably, a ancient gold crown."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s: 'Nice treasure!'"%nick)
+  time.sleep(3)
+  print(" ")
+  print("But then the tomb bursts open, and a undead pharao emerges from it.")
+  time.sleep(3)
+  print(" ")
+  print("YOU WILL NOT STEAL MY TREASURE, I WILL BURY YOU ALIVE!")
+  time.sleep(3)
+  print(" ")
+  print("%s: 'This seems somewhat familiar...'"%nick)
+  time.sleep(3)
+  print(" ")
+  P2 = Player("Undead Pharao", 600, 10, 10)
+  P2.add_move("Flames of Exile")
+  P2.add_move("Quicksand")
+  P2.add_move("Foul Miasma")
+  P2.add_type("Fire")
+  battle(P1, P2)
+  time.sleep(3)
+  print(" ")
+  print("NOOOO, COME BACK THIEF, YOU WILL FEEL MY WRATH- the pharao perishes and turns into ashes.")
+  time.sleep(3)
+  print(" ")
+  print("%s walks over to the treasure pile and picks up the crown."%nick)
+  time.sleep(3)
+  print(" ")
+  print("You have gained the ancient crown!")
+  #code voor equippable item ancient crown hierbij
+  time.sleep(3)
+  print(" ")
+  print("%s then finds a switch, and a secret door is opened. And so, %s exits the pyramid and ventures back to his allies for a bit of rest..."%(nick, nick))
+else:
+  print(" ")
+  print("%s decided not to enter the passage, and instead decided to sleep for this night."%nick)
+time.sleep(3)
+print(" ")
+print("*daytime arrives")
+time.sleep(3)
+print(" ")
+print("Greg: 'Did everyone have a good rest?'")
+time.sleep(3)
+print(" ")
+if passagechoice == "Yes":
+  print("%s: *yawn"%nick)
+else:
+  print("%s: 'Yeah, i slept well.'"%nick)
+time.sleep(3)
+print(" ")
+print("%s: 'Then let's move on.'"%nick2)
+time.sleep(5)
+print(" ")
+print("...")
+time.sleep(3)
+print(" ")
+print("Our heroes are close to the Great Caldera, when they come across giant remains of monsters.")
+time.sleep(3)
+print(" ")
+print("Golden Commander: 'What happened here?'")
+time.sleep(3)
+print(" ")
+print("Suddenly, a mighty beast strikes down upon the sand. It appears to be some sort of canine. It then roars and attacks both %s and %s!"%(nick, nick2))
+time.sleep(3)
+print(" ")
+P2 = Player("Drought Canine", 600, 11, 7)
+P2.add_move("Crunch")
+P2.add_move("Hellwheel")
+P2.add_move("Slash")
+P2.add_move("Combustion")
+P2.add_type("Fire")
+battle(P1, P2)
+time.sleep(3)
+print(" ")
+battle(P3, P2)
+time.sleep(3)
+print(" ")
+print("The giant canine growls, then runs off. It seems this beast was devouring some monsters in this desert.")
+time.sleep(3)
+print(" ")
+print("")
