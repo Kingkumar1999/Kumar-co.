@@ -114,10 +114,10 @@ class effects(elements):
   @staticmethod
   def MULTI_HIT(move, user, target):
     user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0]* 0.25)
-    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)
     math.ceil(damageDone)
     multitimes = random.randint(2,5)
-    for a in range(2,multitimes): #this means 2 to 5 attacks, values can be tweaked
+    for a in range(2,multitimes): 
       target.health -= damageDone
       print("%s has been hit %s times!"%multitimes)
     math.ceil(target.health)
@@ -132,7 +132,7 @@ class effects(elements):
   @staticmethod
   def DRAINING(move, user, target):
     user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0]* 0.25)
-    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)
     healingDone = 0.5 * damageDone
     math.ceil(damageDone)
     math.ceil(healingDone)
@@ -153,7 +153,7 @@ class effects(elements):
   @staticmethod
   def ATTACK_DROP1(move, user, target):
     if target.stat_changes[0] > 1:
-      target.stat_changes[0]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[0]-= 1 
       print("%s's attack was dropped."%target.name)
     else:
       print("%s's attack is at its lowest!"%target.name)
@@ -161,7 +161,7 @@ class effects(elements):
   @staticmethod
   def ATTACK_DROP2(move, user, target):
     if target.stat_changes[0] > 2:
-      target.stat_changes[0]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[0]-= 2 
       print("%s's attack was heavily dropped."%target.name)
     else:
       effects.ATTACK_DROP1(move, user, target)
@@ -169,7 +169,7 @@ class effects(elements):
   @staticmethod
   def ATTACK_BOOST1(move, user, target):
     if target.stat_changes[0] < 9:
-      target.stat_changes[0] += 1 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[0] += 1 
       print("%s's attack was boosted."%user.name)
     else:
       print("%s's attack is at its max!"%user.name)
@@ -177,7 +177,7 @@ class effects(elements):
   @staticmethod
   def ATTACK_BOOST2(move, user, target):
     if target.stat_changes[0] < 8:
-      target.stat_changes[0] += 2 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[0] += 2 
       print("%s's attack was heavily boosted."%user.name)
     else:
       effects.ATTACK_BOOST1(move, user, target)
@@ -185,7 +185,7 @@ class effects(elements):
   @staticmethod
   def DEFENCE_DROP1(move, user, target):
     if target.stat_changes[1] > 1:
-      target.stat_changes[1]-= 1 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[1]-= 1 
       print("%s's defence was dropped."%target.name)
     else:
       print("%s's defence is at its lowest!"%target.name)
@@ -193,7 +193,7 @@ class effects(elements):
   @staticmethod
   def DEFENCE_DROP2(move, user, target):
     if target.stat_changes[1] > 2:
-      target.stat_changes[1]-= 2 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[1]-= 2 
       print("%s's defence was heavily dropped."%target.name)
     else:
       effects.ATTACK_DROP1(move, user, target)
@@ -201,7 +201,7 @@ class effects(elements):
   @staticmethod
   def DEFENCE_BOOST1(move, user, target):
     if target.stat_changes[1] < 9:
-      target.stat_changes[1] += 1 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[1] += 1 
       print("%s's defence was boosted."%user.name)
     else:
       print("%s's defence is at its max!"%user.name)
@@ -209,7 +209,7 @@ class effects(elements):
   @staticmethod
   def DEFENCE_BOOST2(move, user, target):
     if target.stat_changes[1] < 8:
-      target.stat_changes[1] += 2 #This is simple I suppose, just copy this and change the name for other stats
+      target.stat_changes[1] += 2 
       print("%s's defence was heavily boosted."%user.name)
     else:
       effects.ATTACK_BOOST1(move, user, target) 
@@ -217,10 +217,10 @@ class effects(elements):
   @staticmethod
   def RECOVER(move, user, target):
     if user.disable == False:
-      healingDone = move.power * user.aura #self.power is hierbij de hoeveelheid hp die je krijgt.
+      healingDone = move.power * user.aura 
       math.ceil(healingDone)
       user.health += healingDone
-      if user.health>user.maxHealth: #overflow check
+      if user.health>user.maxHealth: 
         user.health=user.maxHealth
       print("%s's health has been increased to %d."%(user.name,user.health))
     elif user.disable == True:
@@ -275,7 +275,7 @@ class effects(elements):
       print(" ")
       print("%s unleashed the a powerful charged attack!"%user.name)
       user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.25)
-      damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+      damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)
       math.ceil(damageDone)
       target.health -= damageDone
       math.ceil(target.health)
@@ -330,7 +330,7 @@ class effects(elements):
   
 class inventory:
   """The team's inventory"""
-  instances = []
+  instances = {}
   def __init__(self, name):
     self.name = name
     
@@ -347,7 +347,8 @@ class inventory:
         if self.check_has(item):
           self.instances[item.name] += 1
         else:
-          self.instances.append({item.name:1})
+          self.instances[item.name] = 1
+    print(self.instances[item.name])
     print("You now have %d %s's."%(self.instances[item.name],item.name))
             
   def remove_item(self, item, amount):
@@ -373,7 +374,7 @@ class Character:
         self.defencePower = defen
         self.life = True
         self.skills= []
-        self.aura=1 #justCesarThings
+        self.aura=1
         self.element= "Normal"
         self.stat_changes = [5,5] #First one is attack, second is defence
         self.limitcount = 0 #Dit is de limit count die je charges voor limit breaks bijhoudt.
@@ -444,7 +445,7 @@ class enemy(Character):
     self.loot = loot
   def droploot(self, target):
     for x in self.loot:
-      print("%s dropped %s"%(self.name,x))
+      print("%s dropped %s"%(self.name, x.name))
       target.add_item(x,1)
 
 class skills(effects):
@@ -597,7 +598,7 @@ class Menu:
             print("Invalid action.")
         
   @staticmethod  
-  def battle(guy,  NME):
+  def battle(guy, NME):
     print(" ")
     print("The battle between %s and %s commences!"%(guy.name,NME.name))
     while True:
@@ -620,6 +621,7 @@ class Menu:
         guy.stat_changes = [5,5]
         guy.state == False
         guy.disable = False
+        NME.droploot(guy)
         break
       move = random.choice(NME.skills)
       for x in skills.instances:
@@ -653,6 +655,9 @@ ThiefBash = skills("Thief Bash", 2, "A bash with a mace used by the thief to att
 Purify = skills("Purify", 4, "A healing current of water that purifies any toxins and regenerates the player.", "Recover")
 Healing = skills("Healing", 4, "A holy veil of light that envelops the player and heals any wounds.", "Recover")
 Lifedrain = skills("Lifedrain", 4, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.", "Draining")
+FistPunch = skills("Fist punch", 2, "A punch using a fist to hit the enemy with", "No effect")
+Drink = skills("Drink", 3, "The user takes in some ale to heal up ... but gets somewhat drunk in the process")
+Boast = skills("Boast", 0, "The user sharpens their ego, boosting attacking power", "Attack boost1")
 GreatswordSlash = skills("Greatsword Slash", 3, "A slash with a big sword used by The Black Knight to attack the player.", "No effect", "Attack boost1") 
 ToxicFangs = skills("Toxic Fangs", 2, "A spider's attack making use of fangs covered in toxins to attack the player and drain some health from them", "Draining", "Poison")
 Rest = skills("Rest", 4, "An creature's skill to sleep for a short time in order to recover some hp back", "Recover")
@@ -709,7 +714,7 @@ class switchers:
   late = {"Attack drop1": effects.ATTACK_DROP1,"Defence drop1": effects.DEFENCE_DROP1,"Attack boost1": effects.ATTACK_BOOST1,"Defence boost1": effects.DEFENCE_BOOST1}
   item = {"Wooden shield": WOODEN_SHIELD, "Berserker's armor": BERSERKERS_ARMOR, "Bandage":BANDAGE, "Magic drop": MAGICDROP, "Ancient crown": ANCIENT_CROWN}
   types = {'Fire': FIRE,'Water': WATER,'Earth': EARTH,'Air':AIR,'Light':LIGHT,'Darkness':DARKNESS,'Swag':SWAG, 'Cosmic':COSMIC}
-  moves = {"Wildfire": Wildfire, "Splash": Splash, "Tremor": Tremor, "Gust": Gust, "Flash":Flash, "Astonish": Astonish, "Meme":Meme, "Boulder Drop":BoulderDrop, "GoblinKnife": GoblinKnife, "Flames of Exile":Flames_of_Exile, "Hellwheel": Hellwheel, "Woodslam": Woodslam, "Airjet": Airjet, "Roast": Roast, "Thief Bash":ThiefBash, "Purify":Purify, "Healing": Healing, "Lifedrain": Lifedrain, "Aura dance": AuraDance, "Aura shield": AuraShield, "Greatsword Slash": GreatswordSlash, "ToxicFangs": ToxicFangs, "Rest": Rest, "Swarm":Swarm, "Totem's Flash of Life":TotemsFlashofLife, "Lavaflux": Lavaflux, "Frostbite": Frostbite, "Quicksand":Quicksand, "Tornado":Tornado, "Lightspear":Lightspear, "Riftsplit": Riftsplit, "Smokeweed": Smokeweed, "ClawSmack": ClawSmack, "Constrict": Constrict, "Demigod Wing Attack": DemigodWingAttack, "Cut":Cut, "Leviathan Hydro Storm": LeviathanHydroStorm, "Ignite": Ignite, "Whirlpool": Whirlpool, "Gaiaslide":Gaiaslide, "Lightning": Lightning, "Deityblade":Deityblade, "Bloodlust": Bloodlust, "Swagburn":Swagburn, "Slash":Slash, "Crystal Jab": CrystalJab, "Foul Miasma": FoulMiasma, "Eagle Sky Crash": EagleSkyCrash, "Combustion": Combustion, "Drainage": Drainage, "Stone tomb":Stonetomb, "Vortex":Vortex, "Blessing": Blessing, "Dark eclipse": Darkeclipse, "Meme overdose": Memeoverdose, "Arrowfire": Arrowfire, "Brewing":Brewing, "Monolith Beam": MonolithBeam, "Inferno meteor": InfernoMeteor, "Ocean tempest":OceanTempest, "Volcanic core":VolcanicCore, "Thunder sky":ThunderSky, "Genesis":Genesis, "Black hole": BlackHole, "Three sixty":Threesixty, "Crunch":Crunch, "Cosmic fury":CosmicFury}
+  moves = {"Wildfire": Wildfire, "Splash": Splash, "Tremor": Tremor, "Gust": Gust, "Flash":Flash, "Astonish": Astonish, "Meme":Meme, "Boulder Drop":BoulderDrop, "GoblinKnife": GoblinKnife, "Flames of Exile":Flames_of_Exile, "Hellwheel": Hellwheel, "Woodslam": Woodslam, "Airjet": Airjet, "Roast": Roast, "Thief Bash":ThiefBash, "Purify":Purify, "Healing": Healing, "Lifedrain": Lifedrain, "Aura dance": AuraDance, "Aura shield": AuraShield, "Fist punch": FistPunch, "Drink":Drink, "Boast":Boast, "Greatsword Slash": GreatswordSlash, "ToxicFangs": ToxicFangs, "Rest": Rest, "Swarm":Swarm, "Totem's Flash of Life":TotemsFlashofLife, "Lavaflux": Lavaflux, "Frostbite": Frostbite, "Quicksand":Quicksand, "Tornado":Tornado, "Lightspear":Lightspear, "Riftsplit": Riftsplit, "Smokeweed": Smokeweed, "ClawSmack": ClawSmack, "Constrict": Constrict, "Demigod Wing Attack": DemigodWingAttack, "Cut":Cut, "Leviathan Hydro Storm": LeviathanHydroStorm, "Ignite": Ignite, "Whirlpool": Whirlpool, "Gaiaslide":Gaiaslide, "Lightning": Lightning, "Deityblade":Deityblade, "Bloodlust": Bloodlust, "Swagburn":Swagburn, "Slash":Slash, "Crystal Jab": CrystalJab, "Foul Miasma": FoulMiasma, "Eagle Sky Crash": EagleSkyCrash, "Combustion": Combustion, "Drainage": Drainage, "Stone tomb":Stonetomb, "Vortex":Vortex, "Blessing": Blessing, "Dark eclipse": Darkeclipse, "Meme overdose": Memeoverdose, "Arrowfire": Arrowfire, "Brewing":Brewing, "Monolith Beam": MonolithBeam, "Inferno meteor": InfernoMeteor, "Ocean tempest":OceanTempest, "Volcanic core":VolcanicCore, "Thunder sky":ThunderSky, "Genesis":Genesis, "Black hole": BlackHole, "Three sixty":Threesixty, "Crunch":Crunch, "Cosmic fury":CosmicFury}
 
   @staticmethod
   def get_obj(whatdict,name):
@@ -761,6 +766,7 @@ while True:
   if nick == "Dat Backdoor":
     print("Welcome, mighty backdoor!")
     P1= party(nick, 30, 500, 4)
+    break
   else:
     if nick == "Cesar":
       print("So your name is %s! That is a really good name!"%nick)
@@ -769,6 +775,7 @@ while True:
     else:  
       print ("So your name is %s!"%nick)
     P1= party(nick, 30, 4, 4)
+    P1.add_item(BANDAGE, 3)
     break
 print(" ")
 time.sleep(3)
@@ -804,10 +811,11 @@ time.sleep(1)
 if Dungeon1choice == 'Left':
   print(" ")
   print ("Oh no! There is a goblin up ahead!")
-  P2 = enemy("Goblin", 30, 4, 4, "Bandage")
-  P2.add_move("GoblinKnife")
+  time.sleep(3)
   print(" ")
   print("A goblin appeared! He is kinda ugly.")
+  P2 = enemy("Goblin", 30, 4, 4, BANDAGE)
+  P2.add_move("GoblinKnife")
   Menu.battle(P1,P2)
 elif Dungeon1choice == 'Right':
   print(" ")
@@ -815,10 +823,11 @@ elif Dungeon1choice == 'Right':
 else:
   print(" ")
   print ("NO! That is a stone golem up ahead! This will be a difficult fight ;-;")
-  P2 = enemy("Stone Golem", 50, 2, 8, "Bandage")
-  P2.add_move("Boulder Drop")
+  time.sleep(3)
   print(" ")
   print("The stone golem guarding the middle path attacks you!")
+  P2 = enemy("Stone Golem", 50, 2, 8, BANDAGE)
+  P2.add_move("Boulder Drop")
   Menu.battle(P1,P2)
 Menu.Smenu(P1)
 time.sleep(3)
@@ -891,6 +900,84 @@ print("%s: '...'" %nick)
 print(" ")
 time.sleep(3)
 print("Old man has joined your party! He has no fighting skills though :(")
+time.sleep(3)
+print(" ")
+print("*two hours later, it's night")
+time.sleep(3)
+print(" ")
+print("%s is walking around, wondering to take the old man on %s's journey or not. Suddenly, %s bumps into a viking."%(nick, nick, nick))
+time.sleep(3)
+print(" ")
+print("Viking: 'Hey kid, you look down. Wanna grab some ale at the tavern?'")
+time.sleep(3)
+print(" ")
+sidequestchoice = Menu.choiceInput("Yes", "No")
+print (" ")
+print("You made your decision, %s."%sidequestchoice)
+time.sleep(1)
+if sidequestchoice == "Yes":
+  print(" ")
+  print("%s: 'Yeah, why not?'"%nick)
+  time.sleep(3)
+  print(" ")
+  print("Viking: 'Then let's grab us some drinks kid!'")
+  time.sleep(3)
+  print("")
+  print("...")
+  time.sleep(3)
+  print(" ")
+  print("*everyone is drinking at the tavern, including %s, who, as a travelling warrior, has quite a lot of stories to tell."%nick)
+  time.sleep(3)
+  print(" ")
+  print("%s: '... and then i was like: 'You better run, you little thief!''"%nick)
+  time.sleep(3)
+  print(" ")
+  print("*drunken crowd laughter")
+  time.sleep(3)
+  print(" ")
+  print("*Boom!")
+  time.sleep(3)
+  print(" ")
+  print("All of sudden, a tall viking steps in, and slams on the table with his fist.")
+  time.sleep(3)
+  print(" ")
+  print("Tall Viking: 'WHO wants to challenge me in a fist fight?!'")
+  time.sleep(3)
+  print(" ")
+  print("Drunken Man: 'This guy over here!' he pointed at %s."%nick)
+  time.sleep(3)
+  print(" ")
+  print("Tall Viking: 'Then let's go!'")
+  time.sleep(3)
+  print(" ")
+  P10 = party("%s(drunk)"%nick, P1.maxHealth, P1.attackPower, P1.defencePower)
+  P10.add_move("Fist punch")
+  P10.add_move("Drink")
+  P10.add_move("Boast")
+  time.sleep(3)
+  print(" ")
+  P2 = enemy("Tall Viking", 70, 7, 7)
+  P2.add_move("Fist punch")
+  P2.add_move("Drink")
+  P2.add_move("Boast")
+  Menu.battle(P10, P2)
+  time.sleep(3)
+  print(" ")
+  print("Tall Viking: Wow kid, you sure got some firm fists there. Here, take this spare viking armor, to show everyone how tough you can be!")
+  time.sleep(3)
+  print(" ")
+  print("You got the Berserker's armor!")
+  P1.add_item(BERSERKERS_ARMOR, 1)
+  Menu.Smenu(P1)
+else:
+  print(" ")
+  print("%s: 'No thank you, i don't feel like it today.'"%nick)
+  time.sleep(3)
+  print(" ")
+  print("Viking: 'Okay kid, see me around if you ever change your mind.'")
+  time.sleep(3)
+  print(" ")
+  print("The viking walks to the tavern, and %s heads to the inn to have some rest."%nick)
 time.sleep(3)
 print(" ")
 print("It's morning now. You and the old man are leaving town, when suddenly, a black knight has arrived. He says: 'STOP RIGHT THERE! I will take that key with me, now hand it over or else!")
@@ -1727,12 +1814,12 @@ print(" ")
 print("%s finally exited  the maze, and walks further. %s can see some kind of ancient tower poking out of the ground not far from here. Suddenly, %s is ambushed by a gorilla!"%(nick, nick, nick))
 time.sleep(3)
 print(" ")
-P2 = Player("Harambe", 350, 9, 9)
+P2 = enemy("Harambe", 350, 9, 9)
 P2.add_move("Meme")
 P2.add_move("Roast")
 P2.add_move("Slash")
 P2.add_type("Swag")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("After %s defeated Harambe, it fled."%nick)
@@ -1760,11 +1847,11 @@ while True:
       print(" ")
       time.sleep(3)
       print("A fire elemental is in the way!")
-      P2 = Player("Fire Elemental", 500, 4, 8)
+      P2 = enemy("Fire Elemental", 500, 4, 8)
       P2.add_move("Lavaflux")
       P2.add_move("Monolith Beam")
       P2.add_type("Fire")
-      battle(P1, P2)
+      Menu.battle(P1, P2)
       time.sleep(3)
       print(" ")
       print("%s defeated the fire elemental, and as it vanishes, you can see a red light at the end of the path. The red light then suddenly plunges into your chest, and for some reason, you feel more powerful."%nick)
@@ -1777,11 +1864,11 @@ while True:
       print(" ")
       time.sleep(3)
       print("A water elemental stands in the way!")
-      P2 = Player("Water Elemental", 500, 4, 8)
+      P2 = enemy("Water Elemental", 500, 4, 8)
       P2.add_move("Frostbite")
       P2.add_move("Monolith Beam")
       P2.add_type("Water")
-      battle(P1, P2)
+      Menu.battle(P1, P2)
       time.sleep(3)
       print(" ")
       print("%s defeated the water elemental, and as it vanishes, you can see a blue light at the end of the path. The blue light then suddenly plunges into your chest, and for some reason, you feel more healthy now."%nick)
@@ -1829,12 +1916,12 @@ print(" ")
 print("Grrrr...")
 time.sleep(3)
 print(" ")
-P2 = Player("Underworld Beast", 500, 12, 12)
+P2 = enemy("Underworld Beast", 500, 12, 12)
 P2.add_move("Bloodlust")
 P2.add_move("Crunch")
 P2.add_move("Slash")
 P2.add_type("Earth")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("As the beast is defeated, %s activates a limit break! With energy flowing all over %s, %s uses %s and blasts the energy into the ground under the beast."%(nick, nick, Moves(7), nick))
@@ -1903,12 +1990,12 @@ print(" ")
 print("Demigod Ying: 'And now you will perish, chosen one!'")
 time.sleep(3)
 print(" ")
-P2 = Player("Demigod Ying", 500, 7, 9)
+P2 = enemy("Demigod Ying", 500, 7, 9)
 P2.add_move("Lightspear")
 P2.add_move("Healing")
 P2.add_move("Demigod Wing Attack")
 P2.add_type("Light")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Demigod Ying: 'Urgh, you will perish for your sins!'he takes off.")
@@ -1965,12 +2052,12 @@ print(" ")
 print("But the reunion is not for long, as a Blazing Golem enters the chamber!")
 time.sleep(3)
 print(" ")
-P2 = Player("Blazing Golem", 400, 8, 10)
+P2 = enemy("Blazing Golem", 400, 8, 10)
 P2.add_move("Ignite")
 P2.add_move("Boulder Drop")
 P2.add_move("Tremor")
 P2.add_type("Fire")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("Greg: 'So where do we head now?'")
@@ -2009,12 +2096,12 @@ print(" ")
 print("Unfortunately, a spider stands in the way!")
 time.sleep(3)
 print(" ")
-P2 = Player("Canyon Spider", 200, 6, 6)
+P2 = enemy("Canyon Spider", 200, 6, 6)
 P2.add_move("ToxicFangs")
 P2.add_move("Cut")
 P2.add_move("Crunch")
 P2.add_type("Earth")
-battle(P3, P2)
+Menu.battle(P3, P2)
 time.sleep(3)
 print(" ")
 print("%s has leveled up, and %s's attack and health have increased!"%(nick2, nick2))
@@ -2054,12 +2141,12 @@ print(" ")
 print("The monster attacks %s!"%nick2)
 time.sleep(3)
 print(" ")
-P2 = Player("Monstrious Reptile", 500, 8, 9)
+P2 = enemy("Monstrious Reptile", 500, 8, 9)
 P2.add_move("Crunch")
 P2.add_move("Slash")
 P2.add_move("Bloodlust")
 P2.add_type("Earth")
-battle(P3, P2)
+Menu.battle(P3, P2)
 time.sleep(3)
 print(" ")
 print("%s eventually cut the monster in half with the newly obtained Cosmic Blade. %s then takes the exit before the cave collapses."%(nick2, nick2))
@@ -2098,12 +2185,12 @@ print(" ")
 print("But as they exit the pass, an earth elemental attacks them, and %s prepares for battle!"%nick)
 time.sleep(3)
 print(" ")
-P2 = Player("Earth Elemental", 550, 7, 10)
+P2 = enemy("Earth Elemental", 550, 7, 10)
 P2.add_move("Monolith Beam")
 P2.add_move("Stone tomb")
 P2.add_move("Tremor")
 P2.add_type("Earth")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
 print("%s defeated the earth elemental, and it steps aside, letting %s and the others pass."%(nick, nick))
@@ -2124,15 +2211,15 @@ print(" ")
 print("But then all of sudden, two giant desert worms submerge from the sand, and attack our heroes! %s and %s stand to defend the rest!"%(nick, nick2))
 time.sleep(3)
 print(" ")
-P2 = Player("Gaia Desert Worm", 600, 9, 7)
+P2 = enemy("Gaia Desert Worm", 600, 9, 7)
 P2.add_move("Toxic Fangs")
 P2.add_move("Crunch")
 P2.add_move("Quicksand")
 P2.add_type("Earth")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
-battle(P3, P2)
+Menu.battle(P3, P2)
 print(" ")
 print("The desert worms are defeated by our two warriors, and they dive back into the ground again.")
 time.sleep(3)
@@ -2199,11 +2286,11 @@ print("%s peers at the water, and is stunned to find out that the pool of water 
 time.sleep(3)
 print(" ")
 print("Do you want to take the hidden passage or not?")
-passagechoice = Menu.choiceInput("Yes", "No")
+sidequestchoice = Menu.choiceInput("Yes", "No")
 print (" ")
-print("You made your decision, %s."%passagechoice)
+print("You made your decision, %s."%sidequestchoice)
 time.sleep(1)
-if passagechoice == "Yes":
+if sidequestchoice == "Yes":
   print(" ")
   print("%s decided to enter the passage, and dives into the water..."%nick)
   time.sleep(3)
@@ -2214,13 +2301,13 @@ if passagechoice == "Yes":
   print("%s steps out of the water but is then grabbed by a couple of tentacles. Two yellow eyes stare at %s."%(nick, nick))
   time.sleep(3)
   print(" ")
-  P2 = Player("Ancient Kraken", 600, 10, 10)
+  P2 = enemy("Ancient Kraken", 600, 10, 10)
   P2.add_move("Constrict")
   P2.add_move("Drainage")
   P2.add_move("Whirlpool")
   P2.add_move("Crunch")
   P2.add_type("Water")
-  battle(P1, P2)
+  Menu.battle(P1, P2)
   time.sleep(3)
   print(" ")
   print("The kraken screams in pain, releasing %s from it's grip. The kraken then dives into the water and flees."%nick)
@@ -2241,12 +2328,12 @@ if passagechoice == "Yes":
   print("%s now is at the bottom of the pit, and a hissing can be heard. A giant python emerges!")
   time.sleep(3)
   print(" ")
-  P2 = Player("Ancient Python", 550, 8, 11)
+  P2 = enemy("Ancient Python", 550, 8, 11)
   P2.add_move("Constrict")
   P2.add_move("Crunch")
   P2.add_move("Toxic Fangs")
   P2.add_type("Darkness")
-  battle(P1, P2)
+  Menu.battle(P1, P2)
   time.sleep(3)
   print(" ")
   print("%s killed the python, and climbs out of the pit, and moves on."%nick)
@@ -2267,12 +2354,12 @@ if passagechoice == "Yes":
   print("%s: 'This seems somewhat familiar...'"%nick)
   time.sleep(3)
   print(" ")
-  P2 = Player("Undead Pharao", 600, 10, 10)
+  P2 = enemy("Undead Pharao", 600, 10, 10)
   P2.add_move("Flames of Exile")
   P2.add_move("Quicksand")
   P2.add_move("Foul Miasma")
   P2.add_type("Fire")
-  battle(P1, P2)
+  Menu.battle(P1, P2)
   time.sleep(3)
   print(" ")
   print("NOOOO, COME BACK THIEF, YOU WILL FEEL MY WRATH- the pharao perishes and turns into ashes.")
@@ -2297,7 +2384,7 @@ print(" ")
 print("Greg: 'Did everyone have a good rest?'")
 time.sleep(3)
 print(" ")
-if passagechoice == "Yes":
+if sidequestchoice == "Yes":
   print("%s: *yawn"%nick)
 else:
   print("%s: 'Yeah, i slept well.'"%nick)
@@ -2318,19 +2405,19 @@ print(" ")
 print("Suddenly, a mighty beast strikes down upon the sand. It appears to be some sort of canine. It then roars and attacks both %s and %s!"%(nick, nick2))
 time.sleep(3)
 print(" ")
-P2 = Player("Drought Canine", 600, 11, 7)
+P2 = enemy("Drought Canine", 600, 11, 7)
 P2.add_move("Crunch")
 P2.add_move("Hellwheel")
 P2.add_move("Slash")
 P2.add_move("Combustion")
 P2.add_type("Fire")
-battle(P1, P2)
+Menu.battle(P1, P2)
 time.sleep(3)
 print(" ")
-battle(P3, P2)
+Menu.battle(P3, P2)
 time.sleep(3)
 print(" ")
 print("The giant canine growls, then runs off. It seems this beast was devouring some monsters in this desert.")
 time.sleep(3)
 print(" ")
-print("")
+print("%s: 'So that's how all those remains are buried here in the sand...'"%nick2)
