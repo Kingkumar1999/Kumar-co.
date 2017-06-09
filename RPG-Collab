@@ -1,6 +1,6 @@
-#fix using moves: name display and defence
-#add menu's outside battle in the story
-
+#Nieuwe types: Lightning, Ice, Metal, Plant, Void(ghost), Magma, Chi en Poison
+#money functions?
+#stores met items die je kunt kopen?
 import time
 import sys
 import random
@@ -16,27 +16,107 @@ class elements:
   def typeMatchup(user,target):
     combo = "%s%s"%(user.element,target.element)
     switcher = {
-      "FireEarth":2,
+      "FirePlant": 2,
+      "FireIce":2,
+      "FireMetal":2,
       "FireDarkness":2,
-      "EarthAir":2,
-      "EarthLight":2,
-      "AirWater":2,
-      "WaterFire":2,
-      "LightDarkness":2,
-      "DarknessLight":2,
-      "DarkessFire":0.5,
-      "LightEarth":0.5,
+      "FireEarth":0.5,
       "FireWater":0.5,
+      "FireVoid":0.5,
+      "WaterFire":2,
+      "WaterMetal":2,
+      "WaterMagma":2,
+      "WaterIce":0.5,
+      "WaterPlant":0.5,
+      "WaterLightning":0.5,
+      "WaterPoison":0.5,
       "WaterAir":0.5,
-      "AirEarth":0.5,
-      "EarthFire":0.5,
-      "SwagSwag":2,
+      "EarthFire":2,
+      "EarthAir":2,
+      "EarthPoison":2,
+      "EarthMagma":2,
+      "EarthLightning":2,
+      "EarthPlant":0.5,
+      "EarthIce":0.5,
       "EarthCosmic":0.5,
+      "EarthMetal":0.5,
+      "AirIce":2,
+      "AirWater":2,
+      "AirMagma":2,
+      "AirPlant":2,
+      "AirPoison":0.5,
+      "AirEarth":0.5,
       "AirCosmic":0.5,
-      "CosmicEarth":2,
-      "CosmicAir":2,
-      "CosmicDarkness":0.5,
+      "AirLightning":0.5,
+      "LightDarkness":2,
+      "LightVoid":2,
+      "LightChi":2,
+      "LightPoison":0.5,
+      "LightMetal":0.5,
+      "DarknessLight":2,
+      "DarknessChi":2,
       "DarknessCosmic":2,
+      "DarknessVoid":2,
+      "DarknessFire":0.5,
+      "DarknessMagma":0.5,
+      "SwagSwag":2,
+      "SwagPoison":2,
+      "PlantEarth":2,
+      "PlantWater":2,
+      "PlantLightning":2,
+      "PlantFire":0.5,
+      "PlantMagma":0.5,
+      "PlantIce":0.5,
+      "PlantAir":0.5,
+      "LightningWater":2,
+      "LightningMetal":2,
+      "LightningAir":2,
+      "LightningIce":2,
+      "LightningEarth":0.5,
+      "LightningPlant":0.5,
+      "LightningVoid":0.5,
+      "LightningMagma":0.5,
+      "IceWater":2,
+      "IcePlant":2,
+      "IceEarth":2,
+      "IceAir":2,
+      "IceFire":0.5,
+      "IceMagma":0.5,
+      "IceMetal":0.5,
+      "MagmaIce":2,
+      "MagmaPlant":2,
+      "MagmaPoison":2,
+      "MagmaLightning":2,
+      "MagmaDarkness":2,
+      "MagmaEarth":0.5,
+      "MagmaWater":0.5,
+      "MagmaAir":0.5,
+      "MetalEarth":2,
+      "MetalLight":2,
+      "MetalIce":2,
+      "MetalPoison":2,
+      "MetalFire":0.5,
+      "MetalWater":0.5,
+      "MetalLightning":0.5,
+      "PoisonWater":2,
+      "PoisonLight":2,
+      "PoisonAir":2,
+      "PoisonSwag":2,
+      "PoisonEarth":0.5,
+      "PoisonMagma":0.5,
+      "PoisonMetal":0.5,
+      "VoidFire":2,
+      "VoidCosmic":2,
+      "VoidLightning":2,
+      "VoidVoid":2,
+      "VoidLight":0.5,
+      "VoidDarkness":0.5,
+      "ChiLight":2,
+      "ChiDarkness":2,
+      "CosmicAir":2,
+      "CosmicEarth":2,
+      "CosmicDarkness":0.5,
+      "CosmicVoid":0.5
     }
     return switcher.get(combo,1)
     
@@ -51,6 +131,16 @@ LIGHT = elements("Light","Your choice is light, a noble element with honour. We 
 DARKNESS = elements("Darkness","You didn't choose the dark, the dark choose you! You are afraid of sunlight, but you can see other's weaknesses, that's cool i guess. Your class is: [ATTACK], skills are: [Astonish]")
 SWAG = elements("Swag","Damn son, you are a memable person indeed. You found the secret element. You got the power of swag. Your class is: [ATTACK], skills are: [Meme]")
 COSMIC = elements("Cosmic", "A unknown and powerful element with divine power...")
+CHI = elements("Chi", "A subtype balanced between Light and Darkness, that specialises in balance")
+LIGHTNING = elements("Lightning", "A subtype that specialises in electricity and lightning, and shares traits with Fire, Air and Light")
+PLANT = elements("Plant", "A subtype that specialises in life and growth, and shares abilities with Water and Earth")
+ICE = elements("Ice", "A subtype that specialises in temperature-controlling and ice formations, and is linked to Water and Air")
+POISON = elements("Poison", "A subtype that specialises in wearing down enemies with toxins, this type is linked to Earth and Darkness")
+METAL = elements("Metal", "A subtype that is as hard as steel and can control any metal, this type shares some traits with Fire and Earth")
+VOID = elements("Void", "A subtype linked to Air and Darkness, that specialises in changing into thin air like a ghost")
+MAGMA = elements("Magma", "a subtype that, just like metal, is linked to fire and earth, and uses the earth's core as a power source")
+
+
 
 class effects(elements):
   """The data for move/item effects."""
@@ -264,6 +354,33 @@ class effects(elements):
     elif target.state == True:
       print(" ")
       print("%s already has a bad state!"%target.name)
+      
+  @staticmethod
+  def OHKO(move, user, target):
+    OHKOchance = random.random()
+    if OHKOchance >= 0.95:
+      print(" ")
+      print("%s was hit with catastrophic damage and was defeated in one blow!"%target.name)
+      target.life = False
+      
+  @staticmethod
+  def NEGATE(move, user, target):
+    user.attackDamage = move.power * user.attackPower * user.aura * elements.typeMatchup(user, target) * (user.stat_changes[0] * 0.25)
+    damageDone = (2 * user.attackDamage) / (target.defencePower * target.stat_changes[1]* 0.25)#intergrating defense?
+    math.ceil(damageDone)
+    if elements.typeMatchup(user, target)==0.5:
+      damageDone = damageDone * 2
+      target.health -= damageDone
+      math.ceil(target.health)
+      print(" ")
+      print("%s ignored %s's type resistance!"%(user.name, target.name))
+    elif elements.typeMatchup(user, target)==2:
+      target.health -= damageDone
+      math.ceil(target.health)
+      print("The attack was super effective!")
+    if target.health<1:
+      target.life = False
+    
     
   @staticmethod
   def CHARGE(move, user, target):
@@ -323,10 +440,31 @@ class effects(elements):
     print("%s's health has been increased to %d."%(user.name,user.health))
     
   @staticmethod
+  def POTION(move, user, target):
+    print("%s used a potion."%user.name)
+    user.health += 15
+    if user.health>user.maxHealth: #overflow check
+      user.health=user.maxHealth
+    print("%s's health has been increased to %d."%(user.name,user.health))
+    
+  @staticmethod
   def MAGICDROP(move, user, target):  
     print("%s used a magical drop."%user.name)
     user.health = user.maxHealth
     print("%s has been fully healed."%user.name)
+  
+  @staticmethod
+  def SMALL_BOMB(move, user, target):
+    print("%s used a small bomb."%user.name)
+    target.health -= 15
+    print("%s was hit by the blast and has %s hp now."%(target.name, target.health))
+    
+  @staticmethod
+  def BOMB(move, user, target):
+    print("%s used a bomb."%user.name)
+    target.health -= 30
+    print("%s was hit by the big blast and has %s hp now."%(target.name, target.health))
+  
   
 class inventory:
   """The team's inventory"""
@@ -399,7 +537,7 @@ class party(Character,inventory):
     self.battlegear = {}
     self.actives = {}
     
-  def use(self, item):
+  def use(self, item, target):
     if isinstance(item,consumeable) == False:
       print("You can't do that with this item!")
       return None
@@ -407,7 +545,7 @@ class party(Character,inventory):
       print("%s used a %s."%(self.name, item.name))
       self.instances[item.name] -= 1
       for x in item.effect:
-        switchers.early[x](None, self, self)
+        switchers.early[x](None, self, target)
     else:
       print("You do not have this item!")
     
@@ -498,7 +636,11 @@ class consumeable(items):
     self.effect = effect
     
 BANDAGE = consumeable("Bandage", "Helps to recover from light injury.", "Bandage" )
+POTION = consumeable("Potion", "Cures wounds and ailments.", "Potion")
 MAGICDROP = consumeable("Magic drop", "Magically heals all wounds.", "Magic drop")
+SMALL_BOMB = consumeable("Small bomb", "Is thrown at the enemy and detonates to inflict damage", "Small bomb")
+BOMB = consumeable("Bomb", "Is thrown at the enemy and detonates for big damage", "Bomb")
+
       
 class Menu:
   """Menu's for the player."""
@@ -548,7 +690,7 @@ class Menu:
       print(user.battlegear[x])
       
   @staticmethod
-  def Bmenu(user):
+  def Bmenu(user, target):
     Menu.playerstate(user)
     print("What do you want to do?")
     choice = input("Options: Proceed, Items (Any key to Proceed.)")
@@ -566,7 +708,7 @@ class Menu:
             print("What do you wish to do with this item?")
             action = input("Options: use, equip, unequip")
             if action=="use" or action=="equip" or action=="unequip":
-              code = "user.%s(choice)"%action
+              code = "user.%s(choice, target)"%action
               exec(code)
               break
             else:
@@ -592,11 +734,10 @@ class Menu:
           print("What do you wish to do with this item?")
           action = input("Options: use, equip, unequip")
           if action=="use" or action=="equip" or action=="unequip":
-            code = "user.%s(choice)"%action
+            code = "user.%s(choice, Null)"%action
             exec(code)
           else:
             print("Invalid action.")
-        
   @staticmethod  
   def battle(guy, NME):
     print(" ")
@@ -606,7 +747,7 @@ class Menu:
         switchers.get_obj(switchers.early,guy.actives[x])(guy, NME)
       i = 0
       while i==0:
-        Menu.Bmenu(guy)
+        Menu.Bmenu(guy, NME)
         print("Skills available to you:")
         for x in guy.skills:
           print(x)
@@ -636,25 +777,102 @@ class Menu:
         guy.limitcount = guy.limitcount + 1
         print(" ")
         print("%s/7 charges."%guy.limitCount)
-
+#"""Fire"""
 Wildfire= skills("Wildfire", 4, "A small fire that burns enemies.", "No effect")
+Hellwheel = skills("Hellwheel", 5, "A bright-red flaming wheel rolling over targets to burn them to crisps.", "No effect", "Burned")
+ClusterFire = skills("Cluster fire", 6, "A ball of fire is thrown at the target that scatters into several small flames that hit the enemy multiple times", "Multi hit")
+Ignite = skills("Ignite", 5, "A long-lasting flame that wears down enemies and lowers their attack power", "No effect", "Attack drop1")
+Combustion = skills("Combustion", 6, "A large explosion that heavily scorches enemies to the bone", "No effect")
+InfernoMeteor = skills("Inferno meteor", 10, "Using a limit break, the user summons a shower of flaming meteors from the sky to bombard enemies", "Limit break", "Burned")
+#"""Water"""
 Splash = skills("Splash", 3, "A jet of water that damages enemies.", "No effect")
+Purify = skills("Purify", 4, "A healing current of water that purifies any toxins and regenerates the player.", "Recover")
+Bubbleveil = skills("Bubble veil", 4, "The user creates a bell of water that covers the user, reducing damage taken and restoring some hp", "Veil", "Recover")
+Whirlpool = skills("Whirlpool", 5, "A maelstrom of water that traps foes and inflicts damage", "No effect", "Defence drop1")
+Drainage = skills("Drainage", 6, "The user absorbs nutrients from the water that restore some hp", "Recover")
+OceanTempest = skills("Ocean tempest", 10, "Using a limit break, the player uses an ancient strength to create a massive storm of water and lightning that washes away enemies", "Limit break", "Defence drop2")
+#"""Earth"""
 Tremor = skills("Tremor", 4, "A small quake that makes enemies tremble.", "No effect")
+Rockslam = skills("Rockslam", 4, "The user's entire body is covered in solid rock, and is slung towards the enemy.", "No effect", "Defence boost1")
+Quicksand = skills("Quicksand", 4, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output", "No effect", "Attack drop1")
+Gaiaslide = skills("Gaiaslide", 5, "A wave of land that engulves enemies and does damage", "No effect")
+Stonetomb = skills("Stone tomb", 6, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them", "No effect", "Defence drop1")
+Continentalrift = skills("Continental rift", 10, "Using a limit break, the user causes the very continents to split open and drop the enemy into a fissure they left behind, then slamming in each other again to close the fissure", "Limit break", "Defence drop2")
+#"""Air"""
 Gust = skills("Gust", 3, "A windy blast that blows enemies away.", "No effect")
+Airjet = skills("Airjet", 4, "A powerful wind that knocks down enemies.", "No effect")
+Tornado = skills("Tornado", 4, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower", "No effect", "Attack drop1")
+Sonicwave = skills("Sonicwave", 5, "A powerful sound burst that blows enemies away", "No effect")
+Vortex = skills("Vortex", 6, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power", "No effect", "Attack drop1")
+HurricaneStorm = skills("Hurricane storm", 10, "Using a limit break, the user creates massive currents that causes catastrophic hurricanes which the enemy is sucked into", "Limit break", "Attack drop2")
+#"""Light"""
 Flash = skills("Flash", 3, "A weak flash of light that hurts enemies.", "No effect")
+Healing = skills("Healing", 4, "A holy veil of light that envelops the player and heals any wounds.", "Recover")
+Lightspear = skills("Lightspear", 4, "A spear made out of pure light that pierces enemies and purifies their soul from any sins", "No effect", "Disable")
+Deityblade = skills("Deityblade", 5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage", "Dual hit", "Disable")
+Blessing = skills("Blessing", 6, "Praying to the gods, the user gains their blessing and has some of their hp restored", "Recover")
+Genesis = skills("Genesis", 10, "Using a limit break, the user calls upon the heavens, and uses a massive weapon of light to wipe out enemies", "Limit break", "Disable")
+#"""Darkness"""
 Astonish = skills("Astonish", 4, "A sudden movement that scares of enemies.", "No effect")
+Lifedrain = skills("Lifedrain", 4, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.", "Draining")
+Riftsplit = skills("Riftsplit", 5, "The player tears the enemy apart by beaming dark energy through their bodies", "Dual hit")
+Bloodlust = skills("Bloodlust", 5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp", "Draining")
+Taunt = skills("Taunt", 0, "The user doesn't attack, but instead enrages the enemy into an attack, and the confidence boosts the user's attack power", "Disable", "Attack boost1")
+Deathfury = skills("Death fury", 10, "The user wells up all their rage into a bloodlust and attacks the target with several hits", "Limit break", "Multi hit")
+#"""Swag"""
 Meme = skills("Meme", 4, "A dank meme that makes enemies angry.", "No effect")
+Roast = skills("Roast", 5, "An epic roast to pester enemies and make them angry.", "No effect")
+Smokeweed = skills("Smokeweed", 4, "The player lights up some weed to smoke, and recovers some hp", "Recover")
+Swagburn = skills("Swagburn,", 5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power", "No effect", "Attack drop1")
+Memeoverdose = skills("Meme overdose", 6, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them", "No effect")
+Threesixty =skills("360 noscope", 10, "Using a limit break, the user pulls out a bow, turns 360 degrees and hits the enemy in the head", "Limit break", "Attack boost2")
+#"""Cosmic"""
+CosmicFury = skills("Cosmic Fury", 5, "Using the Cosmic Blade, the user attacks the target using series of slashes, and drains some hp thanks to the Blade's mystical power.", "Draining", "Multi hit")
+#"""Lightning"""
+Scatterbolt = skills("Scatterbolt", 4,"The user drops a electric bolt that scatters everywhere and hits the target multiple times", "Multi hit")
+Lightning = skills("Lightning", 5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage", "No effect", "Burned")
+Overcharge = skills("Overcharge", 0, "The user charges a large amount of electricity inside their body to raise attack and defence power", "Attack boost1", "Defence boost1")
+ThunderSky = skills("Thunder sky", 10, "Using a limit break, the user summons thunder and lightning, and heats up the air so much that it melts even steel", "Limit break", "Burned")
+#"""Ice"""
+Frostbite = skills("Frostbite", 4, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player", "Draining")
+Icechunks = skills("Ice chunks", 5, "The user gathers a few chunks of ice and fires them of at the target with high speed", "Multi hit")
+Glaciercrash = skills("Glaciercrash", 6, "The user conjures a huge amount of ice particles in the air and compresses them to create a massive glacier that drops onto the enemy", "No effect")
+AbsoluteZero = skills("Absolute zero", 10, "The user envelopes the enemy in a energy of absolute zero temperature, having a chance to freeze them to death", "No effect", "OHKO")
+#"""Plant"""
+Rootplant = skills("Root plant", 4, "The user drops their roots into the earth and drains nutrients and water to restore hp", "Recover")
+MegaWhip = skills("Mega whip", 5, "The user pulls out big vines to hit the enemy back and forth", "Dual hit")
+EnergyDrain = skills("Energy drain", 6, "The user summons plants around the enemy, which begin to drain the enemy's life force and transfer it to the user", "Draining")
+GaiaOvergrow = skills("Gaia overgrow", 10, "Using a limit break, the user covers the entire battlefield with flowers and plants that all absorb sunlight and release a massive sunbeam at the target", "Limit break", "Burned")
+#"""Metal"""
+TitaniumRush = skills("Titanium rush", 7, "The user gathers titanium particles on the first turn and charges. On the second turn, the user is covered in titanium for extra damage and overwhelmes the target", "Charge")
+Reparation = skills("Reparation", 5, "The user gathers all kinds of metal particles to artificially repair any damaged cells to restore hp", "Recover")
+IronCover = skills("Iron Cover", 0, "The user is covered in a hard, metallic film that boost their defence power", "Defence boost2")
+SteelswordRampage = skills("Steelsword Rampage", 10, "Using a limit break, the user gathers metal particles to form a big sword, in which the user attacks the target with it in a series of slashing combo's", "Limit break", "Multi hit")
+#"""Poison"""
+Corrosion = skills("Corrosion", 4, "The user releases a weak but steady poison that eats through enemy weaponry and damages them slightly", "No effect", "Attack drop1")
+HarshAcid = skills("Harsh acid", 5, "The user spits an acid onto the enemy that eats through their flesh and severely damages them", "No effect", "Defence drop1", "Poison")
+EnzymScatter = skills("Enzym scatter", 0, "A horde of enzyms emerges upon the battlefield, buffing up the cells of the user and debuffing the cells of the enemy", "Defence boost1", "Defence drop1")
+MiasmaDownpour = skills("Miasma downpour", 10, "Using a limit break, the user summons a crack in the earth that releases a dense and foul fog that rains upon enemies and burns their skin", "Limit break", "Defence drop2", "Poison")
+#"""Void"""
+Suffocate = skills("Suffocate", 4, "The user sends the enemy into space for a short time, causing them to run out of air and slowly suffocate", "No effect", "Attack drop1")
+Mattershield = skills("Mattershield", 5, "The user concentrates at a certain point to create a gravital force that pulls debrees together to form a shield", "Defence boost2")
+Darkeclipse = skills("Dark eclipse", 6, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage", "No effect")
+BlackHole = skills("Black hole", 10, "Using a limit break, the user throws the enemy into a black hole that rips even space and time", "Limit break", "Defence drop2")
+#"""Magma"""
+Lavaflux = skills("Lavaflux", 4, "A wave of lava controlled by a magnetic flux that engulves the enemy", "No effect")
+Steambeam = skills("Steam beam", 5, "The user spouts a beam of hot water from deep within the earth that hits enemies and possibly burns them", "Burned", "Negate")
+MoltenDrench = skills("Molten drench", 6, "The user summons hot magma from the reath and drenches the enemy in it, severely burning them", "Attack drop1", "Defence drop1", "Burned")
+VolcanicCore = skills("Volcanic core", 10, "Using a limit break, the user uses the power of the very earth itself and engulves the enemy in a eruption of magma and molten metals", "Limit break", "Burned")
+#"""Chi"""
+Meditation = skills("Meditation", 0, "The user sits down in a peaceful way and meditates, raising their attack and defence power", "Attack boost1", "Defence boost1")
+YingPower = skills("Ying power", 5, "The user gains the power of the white side of YingYang, attacking the enemy with fighting skills but also restoring some hp", "Dual hit", "Recover")
+YangPower = skills("Yang power", 6, "The user gains the power of the black side of YingYang, tackling the enemy with a fell swoop that exhausts them", "Attaxk drop1", "Defence drop1", "No effect")
+BalancedWarrior = skills("Balanced warrior", 10, "Using a limit break, the user gained full balance and strength, and attacks enemies with all kinds of fighting skills", "Limit break", "Multi hit", "Attack boost2")
+#Miscellaneous skills
 BoulderDrop = skills("Boulder Drop", 2, "Rocks used by the stone golem to attack the player.", "No effect")
 GoblinKnife = skills("GoblinKnife", 2, "The goblin's knife used to attack the player.", "Dual hit")
 Flames_of_Exile = skills("Flames of Exile", 2, "A magical flame used to attack the player.", "No effect")
-Hellwheel = skills("Hellwheel", 5, "A bright-red flaming wheel rolling over targets to burn them to crisps.", "No effect", "Burned")
-Woodslam = skills("Woodslam", 4, "The user's entire body is covered in solid wood, and is slung towards the enemy.", "No effect", "Defence boost1")
-Airjet = skills("Airjet", 4, "A powerful wind that knocks down enemies.", "No effect")
-Roast = skills("Roast", 5, "An epic roast to pester enemies and make them angry.", "No effect")
 ThiefBash = skills("Thief Bash", 2, "A bash with a mace used by the thief to attack the player.", "No effect")
-Purify = skills("Purify", 4, "A healing current of water that purifies any toxins and regenerates the player.", "Recover")
-Healing = skills("Healing", 4, "A holy veil of light that envelops the player and heals any wounds.", "Recover")
-Lifedrain = skills("Lifedrain", 4, "A sinister move in which the player drains their enemy's lifeforce in order to restore their own hp.", "Draining")
 FistPunch = skills("Fist punch", 2, "A punch using a fist to hit the enemy with", "No effect")
 Drink = skills("Drink", 3, "The user takes in some ale to heal up ... but gets somewhat drunk in the process")
 Boast = skills("Boast", 0, "The user sharpens their ego, boosting attacking power", "Attack boost1")
@@ -665,56 +883,26 @@ Swarm = skills("Swarm", 4, "An attack in which a creature commands it's follower
 TotemsFlashofLife = skills("Totem's Flash of Life", 2, "The Forest Totem's signature attack in which it uses the aura of life to strike down the player", "No effect")
 AuraDance = skills("Aura dance", 0, "The player performs a mystical and ancient dance that boosts their attack", "Attack boost1")
 AuraShield = skills("Aura shield", 0, "The player uses their aura to boost their defence", "Defence boost1")
-Lavaflux = skills("Lavaflux", 5, "A wave of lava controlled by a magnetic flux that engulves the enemy", "No effect")
-Frostbite = skills("Frostbite", 4, "A barrage of magical ice spikes that lash into the enemy and transfer some hp to the player", "Draining")
-Quicksand = skills("Quicksand", 4, "A maelstrom of sand that swirls around the enemy to inflict damage and reduce their damage output", "No effect", "Attack drop1")
-Tornado = skills("Tornado", 4, "A maelstrom of wind that traps the enemy and slings them around for damage, and reduces their attackpower", "No effect", "Attack drop1")
-Lightspear = skills("Lightspear", 4, "A spear made out of pure light that pierces enemies and purifies their soul from any sins", "No effect", "Disable")
-Riftsplit = skills("Riftsplit", 5, "The player tears the enemy apart by beaming dark energy through their bodies", "Dual hit")
-Smokeweed = skills("Smokeweed", 4, "The player lights up some weed to smoke, and recovers some hp", "Recover")
 ClawSmack = skills("ClawSmack", 2.5, "A giant claw is smacked onto the player to inflict damage", "No effect")
 Constrict = skills("Constrict", 3, "Tentacles or other long objects used to wrap the player for damage and reduce their attack output", "No effect", "Attack drop1")
 DemigodWingAttack = skills("Demigod Wing Attack", 3.5, "The signature attack of all demigods, where they use their wings to strike the player", "Dual hit")
 Cut = skills("Cut", 2.5, "A standard move that uses a sharp object to cut something into pieces", "Dual hit")
 LeviathanHydroStorm = skills("Leviathan Hydro Storm", 4, "A huge storm of water, ice and lightning conjured by the Leviathan to test the player's worth", "No effect")
-Ignite = skills("Ignite", 5, "A long-lasting flame that wears down enemies and lowers their attack power", "No effect", "Attack drop1")
-Whirlpool = skills("Whirlpool", 5, "A maelstrom of water that traps foes and inflicts damage", "No effect", "Defence drop1")
-Gaiaslide = skills("Gaiaslide", 5, "A wave of land that engulves enemies and does damage", "No effect")
-Lightning = skills("Lightning", 5, "A very hot lightningbolt that strikes upon enemies and scorches them for damage", "No effect", "Burned")
-Deityblade = skills("Deityblade", 5, "A blade sent from the heavens self, that can pierce any enemy and inflicts damage", "Dual hit", "Disable")
-Bloodlust = skills("Bloodlust", 5, "Drives the player into a frenzy that makes them inflict damage on enemies and drain their blood to recover some hp", "Draining") 
-Swagburn = skills("Swagburn,", 5, "A sick and epic burn that makes the enemy less willing to fight, and drops their attack power", "No effect", "Attack drop1")
 Slash = skills("Slash", 2, "A non-attribute attack that involves slashing the enemy with sharp claws to deal damage", "No effect")
 CrystalJab = skills("Crystal Jab", 4, "Magical crystals are used to jab the foe to inflict damage and drain some hp with those crystals to recover some hp", "Draining")
 FoulMiasma = skills("Foul Miasma", 2.5, "A horrible poisonous breath that weakens the enemy's attack power", "No effect", "Attack drop1", "Poison")
 EagleSkyCrash = skills("Eagle Sky Crash", 4, "The user soars into the sky, then drops to greatly increase their speed and strike the foe with massive force", "No effect", "Charge")
-Combustion = skills("Combustion", 6, "A large explosion that heavily scorches enemies to the bone", "No effect")
-Drainage = skills("Drainage", 6, "The user absorbs nutrients from the water that restore some hp", "Recover")
-Stonetomb = skills("Stone tomb", 6, "The user summons massive stones that crash upon the enemy and bury it alive to weaken them", "No effect", "Defence drop1")
-Vortex = skills("Vortex", 6, "The user conjures a fast-whirling air current that slings around enemies and confuses them to weaken their attack power", "No effect", "Attack drop1")
-Blessing = skills("Blessing", 6, "Praying to the gods, the user gains their blessing and has some of their hp restored", "Recover")
-Darkeclipse = skills("Dark eclipse", 6, "The user drains power from the universe's dark energy, and beams it through foes to inflict heavy damage", "No effect")
-Memeoverdose = skills("Meme overdose", 6, "The user shows several dank memes to the target to annoy them so much that these memes start to hurt them", "No effect")
 Arrowfire = skills("Arrowfire", 2.5, "The user uses a bow and fires of a couple of arrows to pierce the target and inflict damage", "Dual hit")
 Brewing = skills("Brewing", 5, "The user uses their knowledge of alchemy to brew a potion and consume it to restore hp", "Recover")
 MonolithBeam = skills("Monolith Beam", 3, "A powerful elemental beam mainly used by elementals", "Charge")
-InfernoMeteor = skills("Inferno meteor", 10, "Using a limit break, the user summons a shower of flaming meteors from the sky to bombard enemies", "Limit break", "Burned")
-OceanTempest = skills("Ocean tempest", 10, "Using a limit break, the player uses an ancient strength to create a massive storm of water and lightning that washes away enemies", "Limit break", "Disable")
-VolcanicCore = skills("Volcanic core", 10, "Using a limit break, the user uses the power of the very earth itself and engulves the enemy in a eruption of magma and molten metals", "Limit break", "Attack drop2")
-ThunderSky = skills("Thunder sky", 10, "Using a limit break, the user summons thunder and lightning, and heats up the air so much that it melts even steel", "Limit break", "Burned")
-Genesis = skills("Genesis", 10, "Using a limit break, the user calls upon the heavens, and uses a massive weapon of light to wipe out enemies", "Limit break", "Disable")
-BlackHole = skills("Black hole", 10, "Using a limit break, the user throws the enemy into a black hole that rips even space and time", "Limit break", "Defence drop2")
-Threesixty =skills("360 noscope", 10, "Using a limit break, the user pulls out a bow, turns 360 degrees and hits the enemy in the head", "Limit break", "Attack drop2")
 Crunch = skills("Crunch", 4, "An attack with big jaws to bite and hurt the player", "Limit break")
-CosmicFury = skills("Cosmic Fury", 5, "Using the Cosmic Blade, the user attacks the target using series of slashes, and drains some hp thanks to the Blade's mystical power.", "Draining", "Multi hit")
-
 class switchers:
-  early = {"Berserk": effects.BERSERK, "Bandage":effects.BANDAGE}
-  middle = {"No effect": effects.NO_EFFECT, "Dual hit": effects.DUAL_HIT, "Multi hit":effects.MULTI_HIT, "Draining":  effects.DRAINING, "Attack drop2": effects.ATTACK_DROP2,"Defence drop2": effects.DEFENCE_DROP2,"Attack boost2": effects.ATTACK_BOOST2,"Defence boost2": effects.DEFENCE_BOOST2, "Recover": effects.RECOVER, "Poison": effects.POISON, "Burned":effects.BURNED, "Disable":effects.DISABLE, "Charge":effects.CHARGE, "Veil":effects.VEIL}
+  early = {"Berserk": effects.BERSERK, "Bandage":effects.BANDAGE, "Potion":effects.POTION, "Magic drop":effects.MAGICDROP, "Small bomb":effects.SMALL_BOMB, "Bomb":effects.BOMB}
+  middle = {"No effect": effects.NO_EFFECT, "Dual hit": effects.DUAL_HIT, "Multi hit":effects.MULTI_HIT, "Draining":  effects.DRAINING, "Attack drop2": effects.ATTACK_DROP2,"Defence drop2": effects.DEFENCE_DROP2,"Attack boost2": effects.ATTACK_BOOST2,"Defence boost2": effects.DEFENCE_BOOST2, "Recover": effects.RECOVER, "Poison": effects.POISON, "Burned":effects.BURNED, "Disable":effects.DISABLE, "Charge":effects.CHARGE, "Veil":effects.VEIL, "OHKO":effects.OHKO, "Negate":effects.NEGATE}
   late = {"Attack drop1": effects.ATTACK_DROP1,"Defence drop1": effects.DEFENCE_DROP1,"Attack boost1": effects.ATTACK_BOOST1,"Defence boost1": effects.DEFENCE_BOOST1}
-  item = {"Wooden shield": WOODEN_SHIELD, "Berserker's armor": BERSERKERS_ARMOR, "Bandage":BANDAGE, "Magic drop": MAGICDROP, "Ancient crown": ANCIENT_CROWN}
-  types = {'Fire': FIRE,'Water': WATER,'Earth': EARTH,'Air':AIR,'Light':LIGHT,'Darkness':DARKNESS,'Swag':SWAG, 'Cosmic':COSMIC}
-  moves = {"Wildfire": Wildfire, "Splash": Splash, "Tremor": Tremor, "Gust": Gust, "Flash":Flash, "Astonish": Astonish, "Meme":Meme, "Boulder Drop":BoulderDrop, "GoblinKnife": GoblinKnife, "Flames of Exile":Flames_of_Exile, "Hellwheel": Hellwheel, "Woodslam": Woodslam, "Airjet": Airjet, "Roast": Roast, "Thief Bash":ThiefBash, "Purify":Purify, "Healing": Healing, "Lifedrain": Lifedrain, "Aura dance": AuraDance, "Aura shield": AuraShield, "Fist punch": FistPunch, "Drink":Drink, "Boast":Boast, "Greatsword Slash": GreatswordSlash, "ToxicFangs": ToxicFangs, "Rest": Rest, "Swarm":Swarm, "Totem's Flash of Life":TotemsFlashofLife, "Lavaflux": Lavaflux, "Frostbite": Frostbite, "Quicksand":Quicksand, "Tornado":Tornado, "Lightspear":Lightspear, "Riftsplit": Riftsplit, "Smokeweed": Smokeweed, "ClawSmack": ClawSmack, "Constrict": Constrict, "Demigod Wing Attack": DemigodWingAttack, "Cut":Cut, "Leviathan Hydro Storm": LeviathanHydroStorm, "Ignite": Ignite, "Whirlpool": Whirlpool, "Gaiaslide":Gaiaslide, "Lightning": Lightning, "Deityblade":Deityblade, "Bloodlust": Bloodlust, "Swagburn":Swagburn, "Slash":Slash, "Crystal Jab": CrystalJab, "Foul Miasma": FoulMiasma, "Eagle Sky Crash": EagleSkyCrash, "Combustion": Combustion, "Drainage": Drainage, "Stone tomb":Stonetomb, "Vortex":Vortex, "Blessing": Blessing, "Dark eclipse": Darkeclipse, "Meme overdose": Memeoverdose, "Arrowfire": Arrowfire, "Brewing":Brewing, "Monolith Beam": MonolithBeam, "Inferno meteor": InfernoMeteor, "Ocean tempest":OceanTempest, "Volcanic core":VolcanicCore, "Thunder sky":ThunderSky, "Genesis":Genesis, "Black hole": BlackHole, "Three sixty":Threesixty, "Crunch":Crunch, "Cosmic fury":CosmicFury}
+  item = {"Wooden shield": WOODEN_SHIELD, "Berserker's armor": BERSERKERS_ARMOR, "Bandage":BANDAGE, "Potion":POTION, "Magic drop": MAGICDROP, "Small bomb":SMALL_BOMB, "Bomb":BOMB, "Ancient crown": ANCIENT_CROWN}
+  types = {'Fire': FIRE,'Water': WATER,'Earth': EARTH,'Air':AIR,'Light':LIGHT,'Darkness':DARKNESS,'Swag':SWAG, 'Cosmic':COSMIC, 'Lightning':LIGHTNING, 'Ice':ICE, 'Magma':MAGMA, 'Chi':CHI, 'Metal':METAL, 'Plant':PLANT, 'Void':VOID, 'Poison':POISON}
+  moves = {"Wildfire": Wildfire, "Splash": Splash, "Tremor": Tremor, "Gust": Gust, "Flash":Flash, "Astonish": Astonish, "Meme":Meme, "Boulder Drop":BoulderDrop, "GoblinKnife": GoblinKnife, "Flames of Exile":Flames_of_Exile, "Hellwheel": Hellwheel, "Rockslam": Rockslam, "Airjet": Airjet, "Roast": Roast, "Thief Bash":ThiefBash, "Purify":Purify, "Healing": Healing, "Lifedrain": Lifedrain, "Aura dance": AuraDance, "Aura shield": AuraShield, "Fist punch": FistPunch, "Drink":Drink, "Boast":Boast, "Greatsword Slash": GreatswordSlash, "ToxicFangs": ToxicFangs, "Rest": Rest, "Swarm":Swarm, "Totem's Flash of Life":TotemsFlashofLife, "Lavaflux": Lavaflux, "Bubble veil":Bubbleveil, "Frostbite": Frostbite, "Quicksand":Quicksand, "Tornado":Tornado, "Lightspear":Lightspear, "Riftsplit": Riftsplit, "Smokeweed": Smokeweed, "ClawSmack": ClawSmack, "Constrict": Constrict, "Demigod Wing Attack": DemigodWingAttack, "Cut":Cut, "Leviathan Hydro Storm": LeviathanHydroStorm, "Ignite": Ignite, "Whirlpool": Whirlpool, "Gaiaslide":Gaiaslide, "Lightning": Lightning, "Deityblade":Deityblade, "Bloodlust": Bloodlust, "Swagburn":Swagburn, "Slash":Slash, "Crystal Jab": CrystalJab, "Foul Miasma": FoulMiasma, "Eagle Sky Crash": EagleSkyCrash, "Combustion": Combustion, "Drainage": Drainage, "Stone tomb":Stonetomb, "Vortex":Vortex, "Blessing": Blessing, "Dark eclipse": Darkeclipse, "Meme overdose": Memeoverdose, "Arrowfire": Arrowfire, "Brewing":Brewing, "Monolith Beam": MonolithBeam, "Inferno meteor": InfernoMeteor, "Ocean tempest":OceanTempest, "Volcanic core":VolcanicCore, "Thunder sky":ThunderSky, "Genesis":Genesis, "Black hole": BlackHole, "Three sixty":Threesixty, "Crunch":Crunch, "Cosmic fury":CosmicFury, "Scatterbolt":Scatterbolt, "Overcharge":Overcharge, "Ice chunks":Icechunks, "Glaciercrash":Glaciercrash, "Absolute zero":AbsoluteZero, "Root plant":Rootplant, "Mega whip":MegaWhip, "Energy drain":EnergyDrain, "Gaia overgrow":GaiaOvergrow, "Titanium rush":TitaniumRush, "Reparation":Reparation, "Iron cover":IronCover, "Steelsword rampage":SteelswordRampage, "Corrosion":Corrosion, "Harsh acid":HarshAcid, "Enzym scatter":EnzymScatter, "Miasma downpour":MiasmaDownpour, "Suffocate":Suffocate, "Matter shield":Mattershield, "Cluster fire":ClusterFire, "Continental rift":Continentalrift, "Steam beam":Steambeam, "Molten drench":MoltenDrench, "Ying power":YingPower, "Yang power":YangPower, "Meditation":Meditation, "Balanced warrior":BalancedWarrior}
 
   @staticmethod
   def get_obj(whatdict,name):
@@ -725,17 +913,26 @@ LimitAchieve = False
 
 def Moves (num):
   allskills = {
-   'Fire': ["Wildfire", "Hellwheel", "Aura dance", "Lavaflux", "Ignite", "Combustion", "Inferno meteor"],
-   'Water': ["Splash", "Purify", "Aura shield", "Frostbite", "Whirlpool", "Recover", "Ocean tempest"],
-   'Earth': ["Tremor", "Woodslam", "Aura dance", "Quicksand", "Gaiaslide", "Stone tomb", "Volcanic core"],
-   'Air': ["Gust", "Airjet", "Aura dance", "Tornado", "Lightning", "Air Vortex", "Thunder sky"],
+   'Fire': ["Wildfire", "Hellwheel", "Aura dance", "Cluster fire", "Ignite", "Combustion", "Inferno meteor"],
+   'Water': ["Splash", "Purify", "Aura shield", "Bubble veil", "Whirlpool", "Drainage", "Ocean tempest"],
+   'Earth': ["Tremor", "Rockslam", "Aura dance", "Quicksand", "Gaiaslide", "Stone tomb", "Continental rift"],
+   'Air': ["Gust", "Airjet", "Aura dance", "Tornado", "Sonicwave", "Vortex", "Hurricane storm"],
    'Light': ["Flash", "Healing", "Aura shield", "Lightspear", "Deityblade", "Blessing", "Genesis"],
-   'Darkness': ["Astonish", "Lifedrain", "Aura dance", "Riftsplit", "Bloodlust", "Dark eclipse", "Black hole"],
-   'Swag': ["Meme", "Roast", "Smokeweed", "aura shield", "Swagburn", "Meme overdose", "Three sixty"],
+   'Darkness': ["Astonish", "Lifedrain", "Aura dance", "Riftsplit", "Bloodlust", "Taunt", "Death fury"],
+   'Swag': ["Meme", "Roast", "Aura shield", "Smokeweed", "Swagburn", "Meme overdose", "Three sixty"],
    'Cosmic': [],
+   'Chi': ["","","","Meditation","Ying power","Yang power","Balanced warrior"],
+   'Lightning': ["", "", "", "Scatterbolt", "Lightning", "Overcharge", "Thunder sky"],
+   'Ice': ["", "", "", "Frostbite", "Ice chunks", "Glaciercrash", "Absolute zero"],
+   'Plant': ["", "", "", "Rootplant", "Mega whip", "Energy drain", "Gaia overgrow"],
+   'Metal': ["", "", "", "Titanium rush", "Reparation", "Iron cover", "Steelsword rampage"],
+   'Poison': ["", "", "", "Corrosion", "Harsh acid", "Enzym scatter", "Miasma downpour"],
+   'Void': ["", "", "", "Suffocate", "Matter shield", "Dark eclipse", "Black hole"],
+   'Magma': ["","","","Lavaflux","Steam beam", "Molten drench","Volcanic core"],
    'Normal': [],
   }
   return allskills.get(BasicElement)[num-1]
+  return allskills.get(SubElement)[num-1]
   
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 print("WARNING: Don't type anything unless you are told to.")
@@ -776,6 +973,7 @@ while True:
       print ("So your name is %s!"%nick)
     P1= party(nick, 30, 4, 4)
     P1.add_item(BANDAGE, 3)
+    P1.add_item(SMALL_BOMB, 2)
     break
 print(" ")
 time.sleep(3)
@@ -785,6 +983,16 @@ while (True):
     if BasicElement == "Cosmic":
       print(" ")
       print("You cannot use this element!")
+      time.sleep(2)
+      print(" ")
+    elif BasicElement == "Lightning" or BasicElement == "Ice" or BasicElement == "Plant" or BasicElement == "Chi":
+      print(" ")
+      print("You cannot use this element...yet ;)")
+      time.sleep(2)
+      print(" ")
+    elif BasicElement == "Metal" or BasicElement == "Poison" or BasicElement == "Void" or BasicElement == "Magma":
+      print(" ")
+      print("You cannot use this element...yet ;)")
       time.sleep(2)
       print(" ")
     else:
@@ -836,7 +1044,7 @@ print("You walk out the %s Path. You proceed to the inner tomb..."%Dungeon1choic
 time.sleep(3)
 print(" ")
 print("You found the inner tomb. You can see all kinds of treasure lying around. Suddenly, you hear a cold and dread voice speaking: 'YOU COME TO STEAL MY TREASURE, AND YOU WILL NOW FEEL MY WRATH!'. Turning around, you see a levitating corpse with a crown. You have no choice but to battle him to get out of here alive...")
-P2 = enemy("DeadKing",60,3,3)
+P2 = enemy("DeadKing",60,3,3, POTION)
 P2.add_move("Flames of Exile")
 time.sleep(3)
 print(" ")
@@ -897,8 +1105,76 @@ print("Old man: 'My goodness, the prophecy has come out! My child, you are desti
 print(" ")
 time.sleep(4)
 print("%s: '...'" %nick)
-print(" ")
 time.sleep(3)
+print(" ")
+print("Old man: 'But first. Have you ever heard of subtypes, youn' one?'")
+time.sleep(2)
+print(" ")
+print("%s: 'No'"%nick)
+time.sleep(3)
+print(" ")
+print("Old man: 'It's basically a element that belongs to two or more other elements, and they are in fact linked together. If you want, i can help you gain a subtype.'")
+time.sleep(3)
+print(" ")
+subtypechoice = Menu.choiceInput("Yes", "No")
+print (" ")
+print("You made your decision, %s."%subtypechoice)
+time.sleep(1)
+if subtypechoice == "Yes":
+  print(" ")
+  print("Old man: 'Great, what subtype would you like to be? The following elements have the following subtypes:'")
+  print(" ")
+  while (True):
+    time.sleep(1)
+    print("Fire: Lightning, Magma, Metal")
+    print(" ")
+    time.sleep(1)
+    print("Water: Ice, Plant")
+    print(" ")
+    time.sleep(1)
+    print("Earth: Poison, Magma, Metal, Plant")
+    print(" ")
+    time.sleep(1)
+    print("Air: Lightning, Ice, Void")
+    print(" ")
+    time.sleep((1))
+    print("Light: Lightning, Chi")
+    print(" ")
+    time.sleep(1)
+    print("Darkness: Poison, Chi, Void")
+    print(" ")
+    SubElement = input("Which subelement do you want?")
+    if SubElement in switchers.types:
+      if SubElement == "Cosmic":
+        print(" ")
+        print("You cannot use this element!")
+        time.sleep(2)
+        print(" ")
+      elif SubElement == "Fire" or SubElement == "Water" or SubElement == "Earth" or SubElement == "Air" or SubElement == "Light" or SubElement == "Darkness":
+        print(" ")
+        print("You cannot become a basic element!")
+        time.sleep(2)
+        print(" ")
+      else:
+        print(" ")
+        print("The old man performs a mystic ritual, and %s feels different. %s has become another element!"%(nick, nick))
+        switchers.get_obj(switchers.types, SubElement).desc()
+        time.sleep(1)
+        P1.add_type(SubElement)
+        print(" ")
+        time.sleep(1)
+        break
+    else:
+      print("Try again, my friend :)")
+      print(" ")
+else:
+  print(" ")
+  print("%s: No thank you, i like my element the way it is now."%nick)
+  time.sleep(3)
+  print(" ")
+  print("Old man: 'Ok, i can respect your choice youngster.'")
+print(" ")
+time.sleep(4)
 print("Old man has joined your party! He has no fighting skills though :(")
 time.sleep(3)
 print(" ")
